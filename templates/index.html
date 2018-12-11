@@ -4,32 +4,58 @@
     <meta charset="utf-8">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js">
     </script>
-    <title>My Chart</title>
+    <title>Data Visualization</title>
   </head>
   <body>
     <div class="container">
-      <canvas id="myChart"></canvas>
+        <canvas id="myChart"></canvas>
     </div>
 
     <script>
-      let myChart = document.getElementById('myChart').getContext('2d')
-      let massPopChart = new Chart(myChart, {
-        type:'bar', //bar, pie, horizontalBar, line, doughnut, radar, polarArea
-        data: {
-          labels:{{ .Names }},
-          datasets:[{
-            label:'Population',
-            data:{{ .Population }},
-            //backgroundColor:'blue'
-            backgroundColor:['green', 'blue', 'red', 'yellow', 'powderblue'],
-            borderWidth:4,
-            borderColor:'gray',
-            hoverBorderWidth:4,
-            hoverBorderColor:'black'
-          }]
-        },
-        options: {}
-      });
+  
+      // Fetch json data
+      // Use https://d059d46c-898c-4ad8-bd3d-ec8d4c5c870d.mock.pstmn.io/dv (to get data from postman)
+      // Use 'http://localhost:4040/api' (to get data from local server)
+
+      fetch('http://localhost:4040/api').then(function(response) {
+          return response.json();
+        }).then(function(myJson) {
+          
+          var jsonObj = myJson;
+          var jsonValuesArray = Object.values(jsonObj)
+          var citiesArray = jsonValuesArray[0]
+          console.log(citiesArray);
+          var citiesNamesArray = []
+          var citiesPopulationArray = []
+          
+          for(var i = 0; i < citiesArray.length; i++) {
+            var city = citiesArray[i];
+            console.log(city.name)
+            citiesNamesArray.push(city.name)
+            citiesPopulationArray.push(city.population)
+            
+            }
+
+          let myChart = document.getElementById('myChart').getContext('2d')
+          let massPopChart = new Chart(myChart, {
+            type:'bar', //bar, pie, horizontalBar, line, doughnut, radar, polarArea
+            data: {
+              labels: citiesNamesArray,
+              datasets:[{
+                label:'Population',
+                data: citiesPopulationArray,
+                //backgroundColor:'blue'
+                backgroundColor:['orange', 'dodgerblue', 'tomato', 'yellow', 'springgreen'],
+                borderWidth:4,
+                borderColor:'gray',
+                hoverBorderWidth:4,
+                hoverBorderColor:'black'
+              }]
+            },
+            options: {}
+          });
+        });
+
     </script>
 
   </body>
