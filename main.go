@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"html/template"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"path"
@@ -20,18 +21,18 @@ type Cities struct {
 }
 
 func main() {
-	http.HandleFunc("/", ShowCities)
-	http.HandleFunc("/api", GetCitiesJson)
-	readJsonFile()
+	http.HandleFunc("/", showCities)
+	http.HandleFunc("/api", getCitiesJSON)
+	http.HandleFunc("/api/json", postJSONData)
 	http.ListenAndServe(":4040", nil)
 
 }
 
 var cities Cities
 
-func readJsonFile() {
+func readJSONFile() {
 	// Open our jsonFile
-	jsonFile, err := os.Open("cities.json")
+	jsonFile, err := os.Open("output.json")
 	// if we os.Open returns an error then handle it
 	if err != nil {
 		fmt.Println(err)
@@ -62,7 +63,7 @@ func readJsonFile() {
 
 }
 
-func GetCitiesJson(w http.ResponseWriter, r *http.Request) {
+func getCitiesJSON(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
@@ -70,8 +71,8 @@ func GetCitiesJson(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func ShowCities(w http.ResponseWriter, r *http.Request) {
-
+func showCities(w http.ResponseWriter, r *http.Request) {
+	readJSONFile()
 	fp := path.Join("templates", "index.html")
 	tmpl, err := template.ParseFiles(fp)
 	if err != nil {
@@ -82,4 +83,27 @@ func ShowCities(w http.ResponseWriter, r *http.Request) {
 	if err := tmpl.Execute(w, nil); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+}
+
+func postJSONData(rw http.ResponseWriter, req *http.Request) {
+	decoder := json.NewDecoder(req.Body)
+	err := decoder.Decode(&cities)
+	if err != nil {
+		panic(err)
+	}
+
+	for i := 0; i < len(cities.Cities); i++ {
+		log.Println("City Name: " + cities.Cities[i].Name)
+		log.Println("City Population: " + cities.Cities[i].Population)
+	}
+
+	b, err := json.Marshal(cities)
+	if err != nil {
+		panic(err)
+	}
+
+	err = ioutil.WriteFile("output.json", b, 0644)
+	log.Println(err)
+	log.Print("Method called.")
+	//readJSONFile()
 }

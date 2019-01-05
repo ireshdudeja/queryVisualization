@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-  <head>
+  
+<head>
     <meta charset="utf-8">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js">
     </script>
     <title>Data Visualization</title>
   </head>
+
   <body>
     <div class="container">
         <canvas id="myChart"></canvas>
@@ -33,7 +35,6 @@
             console.log(city.name)
             citiesNamesArray.push(city.name)
             citiesPopulationArray.push(city.population)
-            
             }
 
           let myChart = document.getElementById('myChart').getContext('2d')
