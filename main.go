@@ -9,6 +9,9 @@ import (
 	"net/http"
 	"os"
 	"path"
+
+	"github.com/gorilla/mux"
+	"github.com/gorilla/websocket"
 )
 
 type City struct {
@@ -20,19 +23,83 @@ type Cities struct {
 	Cities []City `json:"cities"`
 }
 
-func main() {
-	http.HandleFunc("/", showCities)
-	http.HandleFunc("/api", getCitiesJSON)
-	http.HandleFunc("/api/json", postJSONData)
-	http.ListenAndServe(":4040", nil)
+var clients = make(map[*websocket.Conn]bool)
+var broadcast = make(chan *Cities)
 
+var upgrader = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
+}
+
+func main() {
+
+	router := mux.NewRouter()
+	router.HandleFunc("/", showCities)
+	router.HandleFunc("/api", getCitiesJSON)
+	router.HandleFunc("/api/json", postJSONData)
+	/*
+		router.HandleFunc("/echo", func(w http.ResponseWriter, r *http.Request) {
+			conn, _ := upgrader.Upgrade(w, r, nil) // error ignored for sake of simplicity
+
+			for {
+				// Read message from browser
+				msgType, msg, err := conn.ReadMessage()
+				if err != nil {
+					return
+				}
+
+				// Print the message to the console
+				fmt.Printf("%s sent: %s\n", conn.RemoteAddr(), string(msg))
+
+				// Write message back to browser
+				if err = conn.WriteMessage(msgType, msg); err != nil {
+					return
+				}
+			}
+		})
+	*/
+
+	router.HandleFunc("/echo", wsHandler)
+	go echo()
+	//http.ListenAndServe(":4040", router)
+	log.Fatal(http.ListenAndServe(":4040", router))
+}
+
+func wsHandler(w http.ResponseWriter, r *http.Request) {
+	ws, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("ws handler is called in chart lib!")
+
+	// register client
+	clients[ws] = true
 }
 
 var cities Cities
 
+func showCities(w http.ResponseWriter, r *http.Request) {
+
+	readJSONFile()
+	fp := path.Join("templates", "index.html")
+	tmpl, err := template.ParseFiles(fp)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if err := tmpl.Execute(w, nil); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
 func readJSONFile() {
+
 	// Open our jsonFile
 	jsonFile, err := os.Open("output.json")
+
 	// if we os.Open returns an error then handle it
 	if err != nil {
 		fmt.Println(err)
@@ -71,21 +138,8 @@ func getCitiesJSON(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func showCities(w http.ResponseWriter, r *http.Request) {
-	readJSONFile()
-	fp := path.Join("templates", "index.html")
-	tmpl, err := template.ParseFiles(fp)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	if err := tmpl.Execute(w, nil); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-}
-
 func postJSONData(rw http.ResponseWriter, req *http.Request) {
+
 	decoder := json.NewDecoder(req.Body)
 	err := decoder.Decode(&cities)
 	if err != nil {
@@ -104,6 +158,30 @@ func postJSONData(rw http.ResponseWriter, req *http.Request) {
 
 	err = ioutil.WriteFile("output.json", b, 0644)
 	log.Println(err)
-	log.Print("Method called.")
+	log.Print("Json data Received.")
+
 	//readJSONFile()
+
+	go writer(&cities)
+}
+
+func writer(cities *Cities) {
+	broadcast <- cities
+}
+
+func echo() {
+	for {
+		val := <-broadcast
+		cities := fmt.Sprintf("%s", val.Cities)
+		log.Println("Echo method is called!")
+		// send to every client that is currently connected
+		for client := range clients {
+			err := client.WriteMessage(websocket.TextMessage, []byte(cities))
+			if err != nil {
+				log.Printf("Websocket error: %s", err)
+				client.Close()
+				delete(clients, client)
+			}
+		}
+	}
 }

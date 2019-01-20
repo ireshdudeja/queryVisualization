@@ -1,63 +1,83 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-  
+
 <head>
-    <meta charset="utf-8">
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js">
-    </script>
-    <title>Data Visualization</title>
-  </head>
+  <meta charset="utf-8">
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js">
+  </script>
+  <title>Data Visualization</title>
+</head>
 
-  <body>
-    <div class="container">
-        <canvas id="myChart"></canvas>
-    </div>
+<body>
+  <div class="container">
+    <canvas id="myChart"></canvas>
+  </div>
+  <script>
 
-    <script>
-  
+    var socket = new WebSocket("ws://localhost:4040/echo");
+
+    socket.onopen = function () {
+      socket.send("Connection created!!!");
+    };
+
+
+    function createChart() {
+      var citiesNamesArray = []
+      var citiesPopulationArray = []
       // Fetch json data
       // Use https://d059d46c-898c-4ad8-bd3d-ec8d4c5c870d.mock.pstmn.io/dv (to get data from postman)
       // Use 'http://localhost:4040/api' (to get data from local server)
 
-      fetch('http://localhost:4040/api').then(function(response) {
-          return response.json();
-        }).then(function(myJson) {
-          
-          var jsonObj = myJson;
-          var jsonValuesArray = Object.values(jsonObj)
-          var citiesArray = jsonValuesArray[0]
-          console.log(citiesArray);
-          var citiesNamesArray = []
-          var citiesPopulationArray = []
-          
-          for(var i = 0; i < citiesArray.length; i++) {
-            var city = citiesArray[i];
-            console.log(city.name)
-            citiesNamesArray.push(city.name)
-            citiesPopulationArray.push(city.population)
-            }
+      fetch('http://localhost:4040/api').then(function (response) {
+        return response.json();
+      }).then(function (myJson) {
 
-          let myChart = document.getElementById('myChart').getContext('2d')
-          let massPopChart = new Chart(myChart, {
-            type:'bar', //bar, pie, horizontalBar, line, doughnut, radar, polarArea
-            data: {
-              labels: citiesNamesArray,
-              datasets:[{
-                label:'Population',
-                data: citiesPopulationArray,
-                //backgroundColor:'blue'
-                backgroundColor:['orange', 'dodgerblue', 'tomato', 'yellow', 'springgreen'],
-                borderWidth:4,
-                borderColor:'gray',
-                hoverBorderWidth:4,
-                hoverBorderColor:'black'
-              }]
-            },
-            options: {}
-          });
-        });
+        var jsonObj = myJson;
+        var jsonValuesArray = Object.values(jsonObj)
+        var citiesArray = jsonValuesArray[0]
+        console.log(citiesArray);
 
-    </script>
+        for (var i = 0; i < citiesArray.length; i++) {
+          var city = citiesArray[i];
+          console.log(city.name)
+          citiesNamesArray.push(city.name)
+          citiesPopulationArray.push(city.population)
+        }
+        drawChartFromData(citiesNamesArray, citiesPopulationArray);
+      });
+    };
 
-  </body>
+
+    function drawChartFromData(labelsArray, dataArray) {
+
+      let myChart = document.getElementById('myChart').getContext('2d')
+      let massPopChart = new Chart(myChart, {
+        type: 'bar', //bar, pie, horizontalBar, line, doughnut, radar, polarArea
+        data: {
+          labels: labelsArray,
+          datasets: [{
+            label: 'Population',
+            data: dataArray,
+            //backgroundColor:'blue'
+            backgroundColor: ['orange', 'dodgerblue', 'tomato', 'yellow', 'springgreen'],
+            borderWidth: 4,
+            borderColor: 'gray',
+            hoverBorderWidth: 4,
+            hoverBorderColor: 'black'
+          }]
+        },
+        options: {}
+      });
+    }
+
+    createChart();
+    socket.onmessage = function (e) {
+      createChart()
+    };
+
+    //window.setTimeout(chart);
+  </script>
+
+</body>
+
 </html>
