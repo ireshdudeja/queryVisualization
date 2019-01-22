@@ -14,17 +14,25 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-type City struct {
-	Name       string `json:"name"`
-	Population string `json:"population"`
+type Node struct {
+	ID    string `json:"id"`
+	Label string `json:"label"`
+	Group int    `json:"group"`
+	Level int    `json:"level"`
 }
 
-type Cities struct {
-	Cities []City `json:"cities"`
+type Link struct {
+	Target   string  `json:"target"`
+	Source   string  `json:"source"`
+	Strength float64 `json:"strength"`
+}
+type Courses struct {
+	Nodes []Node `json:"nodes"`
+	Links []Link `json:"links"`
 }
 
 var clients = make(map[*websocket.Conn]bool)
-var broadcast = make(chan *Cities)
+var broadcast = make(chan *Courses)
 
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
@@ -35,34 +43,13 @@ var upgrader = websocket.Upgrader{
 func main() {
 
 	router := mux.NewRouter()
-	router.HandleFunc("/", showCities)
-	router.HandleFunc("/api", getCitiesJSON)
+	router.HandleFunc("/", showCourses)
+	router.HandleFunc("/api", getCoursesJSON)
 	router.HandleFunc("/api/json", postJSONData)
-	/*
-		router.HandleFunc("/echo", func(w http.ResponseWriter, r *http.Request) {
-			conn, _ := upgrader.Upgrade(w, r, nil) // error ignored for sake of simplicity
-
-			for {
-				// Read message from browser
-				msgType, msg, err := conn.ReadMessage()
-				if err != nil {
-					return
-				}
-
-				// Print the message to the console
-				fmt.Printf("%s sent: %s\n", conn.RemoteAddr(), string(msg))
-
-				// Write message back to browser
-				if err = conn.WriteMessage(msgType, msg); err != nil {
-					return
-				}
-			}
-		})
-	*/
-
 	router.HandleFunc("/echo", wsHandler)
 	go echo()
-	//http.ListenAndServe(":4040", router)
+
+	//http.ListenAndServe(":4040", nil)
 	log.Fatal(http.ListenAndServe(":4040", router))
 }
 
@@ -77,9 +64,9 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 	clients[ws] = true
 }
 
-var cities Cities
+var courses Courses
 
-func showCities(w http.ResponseWriter, r *http.Request) {
+func showCourses(w http.ResponseWriter, r *http.Request) {
 
 	readJSONFile()
 	fp := path.Join("templates", "index.html")
@@ -104,7 +91,7 @@ func readJSONFile() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	// fmt.Println("Successfully Opened users.json")
+
 	// defer the closing of our jsonFile so that we can parse it later on
 	defer jsonFile.Close()
 
@@ -117,66 +104,54 @@ func readJSONFile() {
 		fmt.Println(result["cities"])
 	*/
 
-	// we unmarshal our byteArray which contains our
-	// jsonFile's content into 'users' which we defined above
-	json.Unmarshal(byteValue, &cities)
-
-	/*
-		for i := 0; i < len(cities.Cities); i++ {
-			fmt.Println("City Name: " + cities.Cities[i].Name)
-			fmt.Println("City Population: " + cities.Cities[i].Population)
-		}
-	*/
-
+	// unmarshal byteArray
+	json.Unmarshal(byteValue, &courses)
 }
 
-func getCitiesJSON(w http.ResponseWriter, r *http.Request) {
+func getCoursesJSON(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(cities)
+	json.NewEncoder(w).Encode(courses)
 
 }
 
 func postJSONData(rw http.ResponseWriter, req *http.Request) {
 
 	decoder := json.NewDecoder(req.Body)
-	err := decoder.Decode(&cities)
+	err := decoder.Decode(&courses)
 	if err != nil {
 		panic(err)
 	}
 
-	for i := 0; i < len(cities.Cities); i++ {
-		log.Println("City Name: " + cities.Cities[i].Name)
-		log.Println("City Population: " + cities.Cities[i].Population)
+	for i := 0; i < len(courses.Nodes); i++ {
+		log.Println("Node Name: " + courses.Nodes[i].Label)
 	}
 
-	b, err := json.Marshal(cities)
+	b, err := json.Marshal(courses)
 	if err != nil {
 		panic(err)
 	}
 
 	err = ioutil.WriteFile("output.json", b, 0644)
-	log.Println(err)
-	log.Print("Json data Received.")
+	//log.Println(err)
+	log.Print("Json data Received from postman.")
 
-	//readJSONFile()
-
-	go writer(&cities)
+	go writer(&courses)
 }
 
-func writer(cities *Cities) {
-	broadcast <- cities
+func writer(courses *Courses) {
+	broadcast <- courses
 }
 
 func echo() {
 	for {
 		val := <-broadcast
-		cities := fmt.Sprintf("%s", val.Cities)
-		log.Println("Echo method is called!")
+		courses := fmt.Sprintf("%s", val)
+		log.Println(courses)
 		// send to every client that is currently connected
 		for client := range clients {
-			err := client.WriteMessage(websocket.TextMessage, []byte(cities))
+			err := client.WriteMessage(websocket.TextMessage, []byte(courses))
 			if err != nil {
 				log.Printf("Websocket error: %s", err)
 				client.Close()

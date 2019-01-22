@@ -3,15 +3,14 @@
 
 <head>
   <meta charset="utf-8">
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js">
-  </script>
   <title>Data Visualization</title>
 </head>
 
 <body>
-  <div class="container">
-    <canvas id="myChart"></canvas>
-  </div>
+
+  <div id="dag"></div>
+
+  <script src="https://d3js.org/d3.v4.min.js"></script>
   <script>
 
     var socket = new WebSocket("ws://localhost:4040/echo");
@@ -21,58 +20,93 @@
     };
 
 
-    function createChart() {
-      var citiesNamesArray = []
-      var citiesPopulationArray = []
-      // Fetch json data
-      // Use https://d059d46c-898c-4ad8-bd3d-ec8d4c5c870d.mock.pstmn.io/dv (to get data from postman)
-      // Use 'http://localhost:4040/api' (to get data from local server)
+      function createDAG() {
 
-      fetch('http://localhost:4040/api').then(function (response) {
-        return response.json();
-      }).then(function (myJson) {
+        // Fetch json data
+        // Use https://d059d46c-898c-4ad8-bd3d-ec8d4c5c870d.mock.pstmn.io/dv (to get data from postman)
+        // Use 'http://localhost:4040/api' (to get data from local server)
 
-        var jsonObj = myJson;
-        var jsonValuesArray = Object.values(jsonObj)
-        var citiesArray = jsonValuesArray[0]
-        console.log(citiesArray);
+        fetch('http://localhost:4040/api')
+          .then(function (response) {
+            return response.json();
+          }).then(function (myJson) {
 
-        for (var i = 0; i < citiesArray.length; i++) {
-          var city = citiesArray[i];
-          console.log(city.name)
-          citiesNamesArray.push(city.name)
-          citiesPopulationArray.push(city.population)
-        }
-        drawChartFromData(citiesNamesArray, citiesPopulationArray);
-      });
-    };
+            var nodes = myJson.nodes;
+            console.log(nodes);
+            var links = myJson.links;
+            console.log(links);
 
+            function getNodeColor(node) {
+              return node.level === 2 ? 'tomato' : 'aqua'
+            }
 
-    function drawChartFromData(labelsArray, dataArray) {
+            var width = window.innerWidth
+            var height = window.innerHeight
 
-      let myChart = document.getElementById('myChart').getContext('2d')
-      let massPopChart = new Chart(myChart, {
-        type: 'bar', //bar, pie, horizontalBar, line, doughnut, radar, polarArea
-        data: {
-          labels: labelsArray,
-          datasets: [{
-            label: 'Population',
-            data: dataArray,
-            //backgroundColor:'blue'
-            backgroundColor: ['orange', 'dodgerblue', 'tomato', 'yellow', 'springgreen'],
-            borderWidth: 4,
-            borderColor: 'gray',
-            hoverBorderWidth: 4,
-            hoverBorderColor: 'black'
-          }]
-        },
-        options: {}
-      });
-    }
+            var svg = d3.select('#dag').append('svg')
+            svg.attr('width', width).attr('height', height)
 
-    createChart();
+            // simulation setup with all forces
+            var linkForce = d3
+              .forceLink()
+              .id(function (link) { return link.id })
+              .strength(function (link) { return link.strength })
+
+            var simulation = d3
+              .forceSimulation()
+              .force('link', linkForce)
+              .force('charge', d3.forceManyBody().strength(-2500))
+              .force('center', d3.forceCenter(width / 2, height / 2))
+
+            var linkElements = svg.append("g")
+              .attr("class", "links")
+              .selectAll("line")
+              .data(links)
+              .enter().append("line")
+              .attr("stroke-width", 1)
+              .attr("stroke", "rgba(50, 50, 50, 0.2)")
+
+            var nodeElements = svg.append("g")
+              .attr("class", "nodes")
+              .selectAll("circle")
+              .data(nodes)
+              .enter().append("circle")
+              .attr("r", 10)
+              .attr("fill", getNodeColor)
+
+            var textElements = svg.append("g")
+              .attr("class", "texts")
+              .selectAll("text")
+              .data(nodes)
+              .enter().append("text")
+              .text(function (node) { return node.label })
+              .attr("font-size", 15)
+              .attr("dx", 15)
+              .attr("dy", 4)
+
+            simulation.nodes(nodes).on('tick', () => {
+              nodeElements
+                .attr('cx', function (node) { return node.x })
+                .attr('cy', function (node) { return node.y })
+              textElements
+                .attr('x', function (node) { return node.x })
+                .attr('y', function (node) { return node.y })
+              linkElements
+                .attr('x1', function (link) { return link.source.x })
+                .attr('y1', function (link) { return link.source.y })
+                .attr('x2', function (link) { return link.target.x })
+                .attr('y2', function (link) { return link.target.y })
+            })
+
+            simulation.force("link").links(links)
+
+          });
+      };
+
+    createDAG();
     socket.onmessage = function (e) {
-      createChart()
+      d3.select("#dag").select("svg").remove();
+      createDAG()
     };
 
     //window.setTimeout(chart);
