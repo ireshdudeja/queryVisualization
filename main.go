@@ -14,11 +14,17 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+type City struct {
+	Name          string `json:"name"`
+	StudentsCount string `json:"count"`
+}
+
 type Node struct {
-	ID    string `json:"id"`
-	Label string `json:"label"`
-	Group int    `json:"group"`
-	Level int    `json:"level"`
+	ID     string `json:"id"`
+	Label  string `json:"label"`
+	Group  int    `json:"group"`
+	Level  int    `json:"level"`
+	Cities []City `json:"data"`
 }
 
 type Link struct {
@@ -58,7 +64,7 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Printf("ws handler is called in chart lib!")
+	log.Printf("ws handler is called!")
 
 	// register client
 	clients[ws] = true

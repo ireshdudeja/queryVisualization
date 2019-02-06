@@ -2,14 +2,37 @@
 <html lang="en" dir="ltr">
 
 <head>
-  <meta charset="utf-8">
-  <title>Data Visualization</title>
+    <title>Data Visualization</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
 </head>
 
 <body>
 
-  <div id="dag"></div>
-
+  
+  <div class="container-fluid">
+    <h1 class="text-center">Course prerequisites DAG</h1>
+    
+    <div class="row" id="dag"> </div>
+  
+    <div class="row">
+      <div class="col-sm-4" style="background-color:lavender;">
+        <canvas id="barChart"></canvas>
+      </div>
+      <div class="col-sm-4" style="background-color:lavenderblush;">
+        <canvas id="lineChart"></canvas>
+      </div>
+      <div class="col-sm-4" style="background-color:lavender;">
+        <canvas id="pieChart"></canvas>
+      </div>
+    </div>
+    
+  </div>
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script>
 
@@ -19,7 +42,7 @@
       socket.send("Connection created!!!");
     };
 
-
+      var returnedBarChart = null, returnedLineChart = null, returnedPieChart = null;
       function createDAG() {
 
         // Fetch json data
@@ -37,11 +60,12 @@
             console.log(links);
 
             function getNodeColor(node) {
-              return node.level === 2 ? 'tomato' : 'aqua'
+              return node.level === 2 ? 'OrangeRed' : 'SpringGreen'
             }
 
+
             var width = window.innerWidth
-            var height = window.innerHeight
+            var height = window.innerHeight/2
 
             var svg = d3.select('#dag').append('svg')
             svg.attr('width', width).attr('height', height)
@@ -58,13 +82,89 @@
               .force('charge', d3.forceManyBody().strength(-2500))
               .force('center', d3.forceCenter(width / 2, height / 2))
 
-            var linkElements = svg.append("g")
-              .attr("class", "links")
-              .selectAll("line")
+              var dragDrop = d3.drag().on('start', function (node) {
+              node.fx = node.x
+              node.fy = node.y
+            }).on('drag', function (node) {
+              simulation.alphaTarget(0.7).restart()
+              node.fx = d3.event.x
+              node.fy = d3.event.y
+            }).on('end', function (node) {
+              if (!d3.event.active) {
+                simulation.alphaTarget(0)
+              }
+              node.fx = null
+              node.fy = null
+            })
+
+            
+            function selectNode(selectedNode) {
+              console.log(selectedNode.data);
+              console.log(returnedBarChart);
+
+              if(returnedBarChart != null || returnedLineChart != null || returnedPieChart != null) {
+                returnedBarChart.destroy();
+                returnedLineChart.destroy();
+                returnedPieChart.destroy();
+              }
+
+              var citiesArray = selectedNode.data
+              var citiesNamesArray = []
+              var citiesStudentArray = []
+              
+              for (var i = 0; i < citiesArray.length; i++) {
+                var city = citiesArray[i];
+                //console.log(city.name)
+                citiesNamesArray.push(city.name)
+                citiesStudentArray.push(city.count)
+
+              }
+              
+              returnedBarChart = createChart(citiesNamesArray, citiesStudentArray, 'barChart', 'bar')
+              returnedLineChart = createChart(citiesNamesArray, citiesStudentArray, 'lineChart', 'line')
+              returnedPieChart = createChart(citiesNamesArray, citiesStudentArray, 'pieChart', 'pie')
+            }
+
+            function createChart(labelArray, dataArray, chartId, chartType) {
+              let myChart = document.getElementById(chartId).getContext('2d')
+              let massPopChart = new Chart(myChart, {
+                type: chartType, //bar, pie, horizontalBar, line, doughnut, radar, polarArea
+                data: {
+                  labels: labelArray,
+                  datasets: [{
+                    label: 'Students',
+                    data: dataArray,
+                    //backgroundColor:'blue'
+                    backgroundColor: ["rgb(255, 205, 86)","rgb(75, 192, 192)","rgb(54, 162, 235)","rgb(153, 102, 255)","rgb(201, 203, 207)"],
+                    borderWidth: 4,
+                    borderColor: 'gray',
+                    hoverBorderWidth: 4,
+                    hoverBorderColor: 'black'
+                  }]
+                },
+                options: {}
+              });
+              return massPopChart;
+            }
+
+            svg = d3.select("svg")
+            svg.append("svg:defs").append("svg:marker")
+              .attr("id", "arrow")
+              .attr("viewBox", "0 -5 10 10")
+              .attr('refX', -50)//so that it comes towards the center.
+              .attr("markerWidth", 5)
+              .attr("markerHeight", 5)
+              .attr("orient", "auto")
+              .append("svg:path")
+              .attr("d", "M0,-5L10,0L0,5");
+
+            var linkElements = svg.selectAll("line.link")
               .data(links)
-              .enter().append("line")
-              .attr("stroke-width", 1)
-              .attr("stroke", "rgba(50, 50, 50, 0.2)")
+              .enter().append("path")//append path
+              .attr("class", "link")
+              .style("stroke", "#000")
+              .attr('marker-start', (d) => "url(#arrow)")//attach the arrow from defs
+              .style("stroke-width", 2);
 
             var nodeElements = svg.append("g")
               .attr("class", "nodes")
@@ -73,6 +173,8 @@
               .enter().append("circle")
               .attr("r", 10)
               .attr("fill", getNodeColor)
+              .call(dragDrop)
+              .on('click', selectNode)
 
             var textElements = svg.append("g")
               .attr("class", "texts")
@@ -91,11 +193,8 @@
               textElements
                 .attr('x', function (node) { return node.x })
                 .attr('y', function (node) { return node.y })
-              linkElements
-                .attr('x1', function (link) { return link.source.x })
-                .attr('y1', function (link) { return link.source.y })
-                .attr('x2', function (link) { return link.target.x })
-                .attr('y2', function (link) { return link.target.y })
+                linkElements
+                .attr("d", (d) => "M" + d.source.x + "," + d.source.y + ", " + d.target.x + "," + d.target.y)
             })
 
             simulation.force("link").links(links)
