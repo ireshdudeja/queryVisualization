@@ -46,7 +46,21 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
+func determineListenAddress() (string, error) {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "4040"
+		//return "", fmt.Errorf("$PORT not set")
+	}
+	log.Println("Port Number: " + port)
+	return ":" + port, nil
+}
 func main() {
+
+	addr, err := determineListenAddress()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	router := mux.NewRouter()
 	router.HandleFunc("/", showCourses)
@@ -56,7 +70,11 @@ func main() {
 	go echo()
 
 	//http.ListenAndServe(":4040", nil)
-	log.Fatal(http.ListenAndServe(":4040", router))
+	//log.Fatal(http.ListenAndServe(":4040", router))
+
+	if err := http.ListenAndServe(addr, router); err != nil {
+		panic(err)
+	}
 }
 
 func wsHandler(w http.ResponseWriter, r *http.Request) {

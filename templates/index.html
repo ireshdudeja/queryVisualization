@@ -43,6 +43,7 @@
     };
 
       var returnedBarChart = null, returnedLineChart = null, returnedPieChart = null;
+      
       function createDAG() {
 
         // Fetch json data
@@ -166,13 +167,24 @@
               .attr('marker-start', (d) => "url(#arrow)")//attach the arrow from defs
               .style("stroke-width", 2);
 
+            // var nodeElements = svg.append("g")
+            //   .attr("class", "nodes")
+            //   .selectAll("circle")
+            //   .data(nodes)
+            //   .enter().append("circle")
+            //   .attr("r", 10)
+            //   .attr("fill", getNodeColor)
+            //   .call(dragDrop)
+            //   .on('click', selectNode)
+
             var nodeElements = svg.append("g")
               .attr("class", "nodes")
-              .selectAll("circle")
+              .selectAll("image")
               .data(nodes)
-              .enter().append("circle")
-              .attr("r", 10)
-              .attr("fill", getNodeColor)
+              .enter().append("svg:image")
+              .attr('width', 20)
+              .attr('height', 24)
+              .attr("xlink:href", "https://mdn.mozillademos.org/files/6457/mdn_logo_only_color.png")
               .call(dragDrop)
               .on('click', selectNode)
 
@@ -188,8 +200,8 @@
 
             simulation.nodes(nodes).on('tick', () => {
               nodeElements
-                .attr('cx', function (node) { return node.x })
-                .attr('cy', function (node) { return node.y })
+                .attr('x', function (node) { return node.x })
+                .attr('y', function (node) { return node.y })
               textElements
                 .attr('x', function (node) { return node.x })
                 .attr('y', function (node) { return node.y })
