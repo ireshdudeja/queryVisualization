@@ -12,27 +12,61 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
 </head>
 
-<body>
+<body class="pt-5"> <!-- pt-5 to add space between below navigation bar -->
+  
+  <!-- Header -->
+    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#"> Query Visualization </a>
+    </nav>
 
-  
   <div class="container-fluid">
-    <h1 class="text-center">Course prerequisites DAG</h1>
-    
-    <div class="row" id="dag"> </div>
+
+    <!-- Row 1 -->
+    <div class="row mt-3">
+      <div class="col">
+        <div class="card">
+          <div class="card-header"> Directed Acyclic Graph </div>
+          <div class="card-block">
+            <div id="dag"> </div>
+          </div>
+        </div>
+      </div>
+    </div>
   
-    <div class="row">
-      <div class="col-sm-4" style="background-color:lavender;">
-        <canvas id="barChart"></canvas>
+    <!-- Row 2 -->
+    <div class="row mt-3">
+      <div class="col-sm-4">
+        <!-- col will also work-->
+        <div class="card">
+          <div class="card-header"> Bar Chart</div>
+          <div class="card-block"> <canvas id="barChart"></canvas> </div>
+        </div>
       </div>
-      <div class="col-sm-4" style="background-color:lavenderblush;">
-        <canvas id="lineChart"></canvas>
+  
+      <div class="col-sm-4">
+        <div class="card">
+          <div class="card-header"> Line Chart</div>
+          <div class="card-block"> <canvas id="lineChart"></canvas> </div>
+        </div>
       </div>
-      <div class="col-sm-4" style="background-color:lavender;">
-        <canvas id="pieChart"></canvas>
+  
+      <div class="col-sm-4">
+        <div class="card">
+          <div class="card-header"> Pie Chart</div>
+          <div class="card-block"> <canvas id="pieChart"></canvas> </div>
+        </div>
       </div>
     </div>
     
   </div>
+
+  <!-- Footer -->
+  <!-- https://getbootstrap.com/docs/4.0/components/navbar/ -->
+  <!-- <nav class="navbar navbar-dark fixed-bottom bg-dark flex-md-nowrap p-0 shadow">
+      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#"> Query Visualization </a>
+  </nav> -->
+  
+
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script>
 
@@ -50,7 +84,7 @@
         // Use https://d059d46c-898c-4ad8-bd3d-ec8d4c5c870d.mock.pstmn.io/dv (to get data from postman)
         // Use 'http://localhost:4040/api' (to get data from local server)
 
-        fetch('http://localhost:4040/api')
+        fetch('http://localhost:4040/api') // '/api' will also work
           .then(function (response) {
             return response.json();
           }).then(function (myJson) {
@@ -80,7 +114,7 @@
             var simulation = d3
               .forceSimulation()
               .force('link', linkForce)
-              .force('charge', d3.forceManyBody().strength(-2500))
+              .force('charge', d3.forceManyBody().strength(-4500))
               .force('center', d3.forceCenter(width / 2, height / 2))
 
               var dragDrop = d3.drag().on('start', function (node) {
@@ -167,26 +201,51 @@
               .attr('marker-start', (d) => "url(#arrow)")//attach the arrow from defs
               .style("stroke-width", 2);
 
+            var nodeElements = svg.append("g")
+              .attr("class", "nodes")
+              .selectAll("circle")
+              .data(nodes)
+              .enter().append("circle")
+              .attr("r", 10)
+              .attr("fill", getNodeColor)
+              .call(dragDrop)
+              .on('click', selectNode)
+
             // var nodeElements = svg.append("g")
             //   .attr("class", "nodes")
-            //   .selectAll("circle")
+            //   .selectAll("image")
             //   .data(nodes)
-            //   .enter().append("circle")
-            //   .attr("r", 10)
-            //   .attr("fill", getNodeColor)
+            //   .enter().append("svg:image")
+            //   .attr('width', 20)
+            //   .attr('height', 24)
+            //   .attr("xlink:href", "https://mdn.mozillademos.org/files/6457/mdn_logo_only_color.png")
             //   .call(dragDrop)
             //   .on('click', selectNode)
 
-            var nodeElements = svg.append("g")
-              .attr("class", "nodes")
-              .selectAll("image")
-              .data(nodes)
-              .enter().append("svg:image")
-              .attr('width', 20)
-              .attr('height', 24)
-              .attr("xlink:href", "https://mdn.mozillademos.org/files/6457/mdn_logo_only_color.png")
-              .call(dragDrop)
-              .on('click', selectNode)
+            // var nodeElements = svg.append("g")
+            //   .attr("class", "nodes")
+            //   .selectAll("div")
+            //   .data(nodes)
+            //   .enter().append("div")
+            //   //.attr("id", "barChart")
+            //   .attr("style", "border:1px solid #000000;")
+            //   .call(dragDrop)
+            //   .on('click', selectNode)
+
+              // var nodeElements = svg.append("g")
+              // .attr("class", "nodes")
+              // .selectAll("svg")
+              // .data(nodes)
+              // .enter().append("svg")
+              // .attr("width", 10)
+              // .attr("height", 10)
+              // .style("background-color", "green")
+              // .call(dragDrop)
+              // .on('click', selectNode)
+
+            // var canvasElements = nodeElements.append("canvas")
+            //   .attr("id", "barChart")
+            //   .attr("style", "height:40; width:40; border:1px solid #000000;")
 
             var textElements = svg.append("g")
               .attr("class", "texts")
@@ -200,8 +259,8 @@
 
             simulation.nodes(nodes).on('tick', () => {
               nodeElements
-                .attr('x', function (node) { return node.x })
-                .attr('y', function (node) { return node.y })
+                .attr('cx', function (node) { return node.x })
+                .attr('cy', function (node) { return node.y })
               textElements
                 .attr('x', function (node) { return node.x })
                 .attr('y', function (node) { return node.y })
