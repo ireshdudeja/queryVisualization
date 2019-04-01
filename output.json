@@ -1,1 +1,237 @@
-{"nodes":[{"id":"algo","label":"Algorithms","group":0,"level":1,"data":[{"name":"Erfurt","count":"204994"},{"name":"Jena","count":"205129"},{"name":"Gera","count":"99262"},{"name":"Weimar","count":"65479"},{"name":"Ilmenau","count":"25984"}]},{"id":"infosys","label":"Information Systems","group":0,"level":1,"data":[{"name":"Munich","count":"104994"},{"name":"Jena","count":"205129"},{"name":"Gera","count":"99262"},{"name":"Weimar","count":"65479"},{"name":"Ilmenau","count":"25984"}]},{"id":"sse","label":"Software and Systems Engineering","group":0,"level":1,"data":[{"name":"Berlin","count":"200994"},{"name":"Jena","count":"205129"},{"name":"Gera","count":"99262"},{"name":"Weimar","count":"65479"},{"name":"Ilmenau","count":"25984"}]},{"id":"dbms","label":"DBMS Lab","group":0,"level":2,"data":[{"name":"Hamburg","count":"200094"},{"name":"Jena","count":"205129"},{"name":"Gera","count":"99262"},{"name":"Weimar","count":"65479"},{"name":"Ilmenau","count":"25984"}]},{"id":"programming","label":"Programming Lab","group":0,"level":2,"data":[{"name":"Stuttgart","count":"200004"},{"name":"Jena","count":"205129"},{"name":"Gera","count":"99262"},{"name":"Weimar","count":"65479"},{"name":"Ilmenau","count":"25984"}]},{"id":"ddm","label":"Distributed Data Management","group":0,"level":2,"data":[{"name":"Cologne","count":"100004"},{"name":"Jena","count":"205129"},{"name":"Gera","count":"99262"},{"name":"Weimar","count":"65479"},{"name":"Ilmenau","count":"25984"}]},{"id":"project","label":"Research Project","group":0,"level":3,"data":[{"name":"Frankfurt","count":"190004"},{"name":"Jena","count":"205129"},{"name":"Gera","count":"99262"},{"name":"Weimar","count":"65479"},{"name":"Ilmenau","count":"25984"}]}],"links":[{"target":"programming","source":"algo","strength":0.7},{"target":"programming","source":"sse","strength":0.7},{"target":"dbms","source":"infosys","strength":0.7},{"target":"ddm","source":"infosys","strength":0.7},{"target":"project","source":"programming","strength":0.7},{"target":"project","source":"dbms","strength":1},{"target":"project","source":"ddm","strength":0.7}]}
+{
+    "nodes": [
+        {
+            "id": "algo",
+            "label": "Algo",
+            "group": 0,
+            "level": 1,
+            "data": [
+                {
+                    "name": "Erfurt",
+                    "count": "204994"
+                },
+                {
+                    "name": "Jena",
+                    "count": "205129"
+                },
+                {
+                    "name": "Gera",
+                    "count": "99262"
+                },
+                {
+                    "name": "Weimar",
+                    "count": "65479"
+                },
+                {
+                    "name": "Ilmenau",
+                    "count": "25984"
+                }
+            ]
+        },
+        {
+            "id": "infosys",
+            "label": "Information Systems",
+            "group": 0,
+            "level": 1,
+            "data": [
+                {
+                    "name": "Munich",
+                    "count": "104994"
+                },
+                {
+                    "name": "Jena",
+                    "count": "205129"
+                },
+                {
+                    "name": "Gera",
+                    "count": "99262"
+                },
+                {
+                    "name": "Weimar",
+                    "count": "65479"
+                },
+                {
+                    "name": "Ilmenau",
+                    "count": "25984"
+                }
+            ]
+        },
+        {
+            "id": "sse",
+            "label": "Software and Systems Engineering",
+            "group": 0,
+            "level": 1,
+            "data": [
+                {
+                    "name": "Berlin",
+                    "count": "200994"
+                },
+                {
+                    "name": "Jena",
+                    "count": "205129"
+                },
+                {
+                    "name": "Gera",
+                    "count": "99262"
+                },
+                {
+                    "name": "Weimar",
+                    "count": "65479"
+                },
+                {
+                    "name": "Ilmenau",
+                    "count": "25984"
+                }
+            ]
+        },
+        {
+            "id": "dbms",
+            "label": "DBMS Lab",
+            "group": 0,
+            "level": 2,
+            "data": [
+                {
+                    "name": "Hamburg",
+                    "count": "200094"
+                },
+                {
+                    "name": "Jena",
+                    "count": "205129"
+                },
+                {
+                    "name": "Gera",
+                    "count": "99262"
+                },
+                {
+                    "name": "Weimar",
+                    "count": "65479"
+                },
+                {
+                    "name": "Ilmenau",
+                    "count": "25984"
+                }
+            ]
+        },
+        {
+            "id": "programming",
+            "label": "Programming Lab",
+            "group": 0,
+            "level": 2,
+            "data": [
+                {
+                    "name": "Stuttgart",
+                    "count": "200004"
+                },
+                {
+                    "name": "Jena",
+                    "count": "205129"
+                },
+                {
+                    "name": "Gera",
+                    "count": "99262"
+                },
+                {
+                    "name": "Weimar",
+                    "count": "65479"
+                },
+                {
+                    "name": "Ilmenau",
+                    "count": "25984"
+                }
+            ]
+        },
+        {
+            "id": "ddm",
+            "label": "Distributed Data Management",
+            "group": 0,
+            "level": 2,
+            "data": [
+                {
+                    "name": "Cologne",
+                    "count": "100004"
+                },
+                {
+                    "name": "Jena",
+                    "count": "205129"
+                },
+                {
+                    "name": "Gera",
+                    "count": "99262"
+                },
+                {
+                    "name": "Weimar",
+                    "count": "65479"
+                },
+                {
+                    "name": "Ilmenau",
+                    "count": "25984"
+                }
+            ]
+        },
+        {
+            "id": "project",
+            "label": "Research Project",
+            "group": 0,
+            "level": 3,
+            "data": [
+                {
+                    "name": "Frankfurt",
+                    "count": "190004"
+                },
+                {
+                    "name": "Jena",
+                    "count": "205129"
+                },
+                {
+                    "name": "Gera",
+                    "count": "99262"
+                },
+                {
+                    "name": "Weimar",
+                    "count": "65479"
+                },
+                {
+                    "name": "Ilmenau",
+                    "count": "25984"
+                }
+            ]
+        }
+    ],
+    "links": [
+        {
+            "target": "programming",
+            "source": "algo",
+            "strength": 0.7
+        },
+        {
+            "target": "programming",
+            "source": "sse",
+            "strength": 0.7
+        },
+        {
+            "target": "dbms",
+            "source": "infosys",
+            "strength": 0.7
+        },
+        {
+            "target": "ddm",
+            "source": "infosys",
+            "strength": 0.7
+        },
+        {
+            "target": "project",
+            "source": "programming",
+            "strength": 0.7
+        },
+        {
+            "target": "project",
+            "source": "dbms",
+            "strength": 1
+        },
+        {
+            "target": "project",
+            "source": "ddm",
+            "strength": 0.7
+        }
+    ]
+}
