@@ -184,6 +184,28 @@
               return massPopChart;
             }
 
+            function mouseover() {
+              d3.select("svg").select("nodes").select("circle").transition()
+                .duration(750)
+                .attr("r", 16);
+              console.log("Mouseover called!");
+            }
+
+            function mouseout() {
+              d3.select("svg").select("nodes").select("circle").transition()
+                .duration(750)
+                .attr("r", 10);
+                console.log("Mouseout called!");
+            }
+
+            var tooltip = d3.select("body")
+              .append("div")
+              .attr("class", "card")
+              .style("position", "absolute")
+              .style("z-index", "20")
+              .style("visibility", "hidden")
+              .text("a simple tooltip to check how it will behave");
+
             svg = d3.select("svg")
             svg.append("svg:defs").append("svg:marker")
               .attr("id", "arrow")
@@ -212,6 +234,9 @@
               .attr("fill", getNodeColor)
               .call(dragDrop)
               .on('click', selectNode)
+              .on("mouseover", function(){return tooltip.style("visibility", "visible");})
+	            .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
+	            .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
 
             // var nodeElements = svg.append("g")
             //   .attr("class", "nodes")

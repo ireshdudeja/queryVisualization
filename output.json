@@ -26,7 +26,17 @@
                     "name": "Ilmenau",
                     "count": "25984"
                 }
-            ]
+            ],
+            "operatorData": {
+                "attributes": {
+                    "port": "8099",
+                    "path": "^/publish$",
+                    "RESTMethod": "RESTSource::POST_METHOD"
+                },
+                "return": {
+                    "returnName": "value"
+                }
+            }
         },
         {
             "id": "extractJson",
@@ -54,7 +64,15 @@
                     "name": "Ilmenau",
                     "count": "25984"
                 }
-            ]
+            ],
+            "operatorData": {
+                "attributes": {
+                    "initializer_list": "{\"key\", \"data\"}"
+                },
+                "return": {
+                    "returnName": "value"
+                }
+            }
         },
         {
             "id": "slidingWindow",
@@ -82,7 +100,18 @@
                     "name": "Ilmenau",
                     "count": "25984"
                 }
-            ]
+            ],
+            "operatorData": {
+                "attributes": {
+                    "WinType": "WindowParams::RowWindow",
+                    "size": "10",
+                    "windowFunc": "",
+                    "eviction interval": ""
+                },
+                "return": {
+                    "returnName": "value"
+                }
+            }
         },
         {
             "id": "aggregate",
@@ -110,7 +139,15 @@
                     "name": "Ilmenau",
                     "count": "25984"
                 }
-            ]
+            ],
+            "operatorData": {
+                "attributes": {
+                    "attributeName": "value"
+                },
+                "return": {
+                    "returnName": "value"
+                }
+            }
         },
         {
             "id": "print",
@@ -138,7 +175,15 @@
                     "name": "Ilmenau",
                     "count": "25984"
                 }
-            ]
+            ],
+            "operatorData": {
+                "attributes": {
+                    "outputStream": "std::cout"
+                },
+                "return": {
+                    "returnName": "value"
+                }
+            }
         }
     ],
     "links": [
