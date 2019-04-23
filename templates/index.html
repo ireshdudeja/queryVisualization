@@ -204,7 +204,7 @@
               .style("position", "absolute")
               .style("z-index", "20")
               .style("visibility", "hidden")
-              .text("a simple tooltip to check how it will behave");
+              .text("No Information Available!");
 
             svg = d3.select("svg")
             svg.append("svg:defs").append("svg:marker")
@@ -234,7 +234,11 @@
               .attr("fill", getNodeColor)
               .call(dragDrop)
               .on('click', selectNode)
-              .on("mouseover", function(){return tooltip.style("visibility", "visible");})
+              .on("mouseover", function(node){
+                tooltip.text(JSON.stringify(node.operatorData.attributes));
+                return tooltip.style("visibility", "visible");
+
+              })
 	            .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
 	            .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
 

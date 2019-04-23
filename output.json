@@ -67,7 +67,7 @@
             ],
             "operatorData": {
                 "attributes": {
-                    "initializer_list": "{\"key\", \"data\"}"
+                    "initializer_list": "{'key', 'data'}"
                 },
                 "return": {
                     "returnName": "value"
@@ -106,7 +106,7 @@
                     "WinType": "WindowParams::RowWindow",
                     "size": "10",
                     "windowFunc": "",
-                    "eviction interval": ""
+                    "evictionInterval": ""
                 },
                 "return": {
                     "returnName": "value"
