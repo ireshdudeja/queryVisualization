@@ -19,12 +19,18 @@ type City struct {
 	StudentsCount string `json:"count"`
 }
 
+type OperatorData struct {
+	Attributes map[string]string `json:"attributes"`
+	Return     map[string]string `json:"return"`
+}
+
 type Node struct {
-	ID     string `json:"id"`
-	Label  string `json:"label"`
-	Group  int    `json:"group"`
-	Level  int    `json:"level"`
-	Cities []City `json:"data"`
+	ID     string       `json:"id"`
+	Label  string       `json:"label"`
+	Group  int          `json:"group"`
+	Level  int          `json:"level"`
+	Cities []City       `json:"data"`
+	Info   OperatorData `json:"operatorData"`
 }
 
 type Link struct {
@@ -32,13 +38,13 @@ type Link struct {
 	Source   string  `json:"source"`
 	Strength float64 `json:"strength"`
 }
-type Courses struct {
+type Query struct {
 	Nodes []Node `json:"nodes"`
 	Links []Link `json:"links"`
 }
 
 var clients = make(map[*websocket.Conn]bool)
-var broadcast = make(chan *Courses)
+var broadcast = make(chan *Query)
 
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
@@ -63,8 +69,8 @@ func main() {
 	}
 
 	router := mux.NewRouter()
-	router.HandleFunc("/", showCourses)
-	router.HandleFunc("/api", getCoursesJSON)
+	router.HandleFunc("/", showQuery)
+	router.HandleFunc("/api", getQueryJSON)
 	router.HandleFunc("/api/json", postJSONData)
 	router.HandleFunc("/echo", wsHandler)
 	go echo()
@@ -88,9 +94,9 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 	clients[ws] = true
 }
 
-var courses Courses
+var query Query
 
-func showCourses(w http.ResponseWriter, r *http.Request) {
+func showQuery(w http.ResponseWriter, r *http.Request) {
 
 	readJSONFile()
 	fp := path.Join("templates", "index.html")
@@ -121,38 +127,37 @@ func readJSONFile() {
 
 	// read our opened jsonFile as a byte array.
 	byteValue, _ := ioutil.ReadAll(jsonFile)
-	/*
-		var result map[string]interface{}
-		json.Unmarshal([]byte(byteValue), &result)
 
-		fmt.Println(result["cities"])
-	*/
+	var result map[string]interface{}
+	json.Unmarshal([]byte(byteValue), &result)
+
+	fmt.Println(result["nodes"])
 
 	// unmarshal byteArray
-	json.Unmarshal(byteValue, &courses)
+	json.Unmarshal(byteValue, &query)
 }
 
-func getCoursesJSON(w http.ResponseWriter, r *http.Request) {
+func getQueryJSON(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(courses)
+	json.NewEncoder(w).Encode(query)
 
 }
 
 func postJSONData(rw http.ResponseWriter, req *http.Request) {
 
 	decoder := json.NewDecoder(req.Body)
-	err := decoder.Decode(&courses)
+	err := decoder.Decode(&query)
 	if err != nil {
 		panic(err)
 	}
 
-	for i := 0; i < len(courses.Nodes); i++ {
-		log.Println("Node Name: " + courses.Nodes[i].Label)
+	for i := 0; i < len(query.Nodes); i++ {
+		log.Println("Node Name: " + query.Nodes[i].Label)
 	}
 
-	b, err := json.Marshal(courses)
+	b, err := json.Marshal(query)
 	if err != nil {
 		panic(err)
 	}
@@ -161,21 +166,21 @@ func postJSONData(rw http.ResponseWriter, req *http.Request) {
 	//log.Println(err)
 	log.Print("Json data Received from postman.")
 
-	go writer(&courses)
+	go writer(&query)
 }
 
-func writer(courses *Courses) {
-	broadcast <- courses
+func writer(query *Query) {
+	broadcast <- query
 }
 
 func echo() {
 	for {
 		val := <-broadcast
-		courses := fmt.Sprintf("%s", val)
-		log.Println(courses)
+		query := fmt.Sprintf("%s", val)
+		log.Println(query)
 		// send to every client that is currently connected
 		for client := range clients {
-			err := client.WriteMessage(websocket.TextMessage, []byte(courses))
+			err := client.WriteMessage(websocket.TextMessage, []byte(query))
 			if err != nil {
 				log.Printf("Websocket error: %s", err)
 				client.Close()

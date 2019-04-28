@@ -1,0 +1,20 @@
+{
+	"ImportPath": "queryVisualization",
+	"GoVersion": "go1.11",
+	"GodepVersion": "v80",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/gorilla/mux",
+			"Comment": "v1.6.2-20-g08e7f80",
+			"Rev": "08e7f807d38d6a870193019bb439056118661505"
+		},
+		{
+			"ImportPath": "github.com/gorilla/websocket",
+			"Comment": "v1.4.0-6-g95ba29e",
+			"Rev": "95ba29eb981bbb27d92e1f70bf8a1949452d926b"
+		}
+	]
+}

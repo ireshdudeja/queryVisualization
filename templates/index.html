@@ -2,7 +2,7 @@
 <html lang="en" dir="ltr">
 
 <head>
-    <title>Data Visualization</title>
+    <title>Query Visualization</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
@@ -60,6 +60,8 @@
     
   </div>
 
+  <p class="mt-5 mb-3 text-muted text-center">© 2018-2019</p>
+
   <!-- Footer -->
   <!-- https://getbootstrap.com/docs/4.0/components/navbar/ -->
   <!-- <nav class="navbar navbar-dark fixed-bottom bg-dark flex-md-nowrap p-0 shadow">
@@ -84,7 +86,7 @@
         // Use https://d059d46c-898c-4ad8-bd3d-ec8d4c5c870d.mock.pstmn.io/dv (to get data from postman)
         // Use 'http://localhost:4040/api' (to get data from local server)
 
-        fetch('http://localhost:4040/api') // '/api' will also work
+        fetch('/api') // '/api' or 'http://localhost:4040/api' will work
           .then(function (response) {
             return response.json();
           }).then(function (myJson) {
@@ -182,6 +184,28 @@
               return massPopChart;
             }
 
+            function mouseover() {
+              d3.select("svg").select("nodes").select("circle").transition()
+                .duration(750)
+                .attr("r", 16);
+              console.log("Mouseover called!");
+            }
+
+            function mouseout() {
+              d3.select("svg").select("nodes").select("circle").transition()
+                .duration(750)
+                .attr("r", 10);
+                console.log("Mouseout called!");
+            }
+
+            var tooltip = d3.select("body")
+              .append("div")
+              .attr("class", "card")
+              .style("position", "absolute")
+              .style("z-index", "20")
+              .style("visibility", "hidden")
+              .text("No Information Available!");
+
             svg = d3.select("svg")
             svg.append("svg:defs").append("svg:marker")
               .attr("id", "arrow")
@@ -210,6 +234,13 @@
               .attr("fill", getNodeColor)
               .call(dragDrop)
               .on('click', selectNode)
+              .on("mouseover", function(node){
+                tooltip.text(JSON.stringify(node.operatorData.attributes));
+                return tooltip.style("visibility", "visible");
+
+              })
+	            .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
+	            .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
 
             // var nodeElements = svg.append("g")
             //   .attr("class", "nodes")

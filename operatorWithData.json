@@ -1,0 +1,101 @@
+{
+    "nodes": [
+        {
+            "id": "newStreamFromREST",
+            "label": "newStreamFromREST",
+            "group": 0,
+            "level": 2,
+            "operatorData": {
+                "attributes": {
+                    "port": "8099",
+                    "path": "^/publish$",
+                    "RESTMethod": "RESTSource::POST_METHOD"
+                },
+                "return": {
+                    "returnName": "value"
+                }
+            }
+        },
+        {
+            "id": "extractJson",
+            "label": "extractJson",
+            "group": 0,
+            "level": 1,
+            "operatorData": {
+                "attributes": {
+                    "initializer_list": "{\"key\", \"data\"}"
+                },
+                "return": {
+                    "returnName": "value"
+                }
+            }
+        },
+        {
+            "id": "slidingWindow",
+            "label": "slidingWindow",
+            "group": 0,
+            "level": 1,
+            "operatorData": {
+                "attributes": {
+                    "WinType": "WindowParams::RowWindow",
+                    "size": "10",
+                    "windowFunc": "",
+                    "eviction interval": ""
+                },
+                "return": {
+                    "returnName": "value"
+                }
+            }
+        },
+        {
+            "id": "aggregate",
+            "label": "aggregate",
+            "group": 0,
+            "level": 1,
+            "operatorData": {
+                "attributes": {
+                    "attributeName": "value"
+                },
+                "return": {
+                    "returnName": "value"
+                }
+            }
+        },
+        {
+            "id": "print",
+            "label": "print",
+            "group": 0,
+            "level": 2,
+            "operatorData": {
+                "attributes": {
+                    "outputStream": "std::cout"
+                },
+                "return": {
+                    "returnName": "value"
+                }
+            }
+        }
+    ],
+    "links": [
+        {
+            "target": "extractJson",
+            "source": "newStreamFromREST",
+            "strength": 0.7
+        },
+        {
+            "target": "slidingWindow",
+            "source": "extractJson",
+            "strength": 0.7
+        },
+        {
+            "target": "aggregate",
+            "source": "slidingWindow",
+            "strength": 0.7
+        },
+        {
+            "target": "print",
+            "source": "aggregate",
+            "strength": 0.7
+        }
+    ]
+}
