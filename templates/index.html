@@ -92,9 +92,9 @@
           }).then(function (myJson) {
 
             var nodes = myJson.nodes;
-            console.log(nodes);
+            console.log("Nodes: ", nodes);
             var links = myJson.links;
-            console.log(links);
+            console.log("Links", links);
 
             function getNodeColor(node) {
               return node.level === 2 ? 'OrangeRed' : 'SpringGreen'
@@ -111,7 +111,7 @@
             var linkForce = d3
               .forceLink()
               .id(function (link) { return link.id })
-              .strength(function (link) { return link.strength })
+              //.strength(function (link) { return link.strength })
 
             var simulation = d3
               .forceSimulation()
@@ -136,8 +136,8 @@
 
             
             function selectNode(selectedNode) {
-              console.log(selectedNode.data);
-              console.log(returnedBarChart);
+              console.log("Selected Node: ", selectedNode.data);
+              //console.log("Returned Chart: ", returnedBarChart);
 
               if(returnedBarChart != null || returnedLineChart != null || returnedPieChart != null) {
                 returnedBarChart.destroy();
@@ -184,6 +184,7 @@
               return massPopChart;
             }
 
+            /*
             function mouseover() {
               d3.select("svg").select("nodes").select("circle").transition()
                 .duration(750)
@@ -197,6 +198,7 @@
                 .attr("r", 10);
                 console.log("Mouseout called!");
             }
+            */
 
             var tooltip = d3.select("body")
               .append("div")
@@ -235,7 +237,8 @@
               .call(dragDrop)
               .on('click', selectNode)
               .on("mouseover", function(node){
-                tooltip.text(JSON.stringify(node.operatorData.attributes));
+                tooltip.text(JSON.stringify(node.parameters));
+                console.log("Mouse over:", node.parameters);
                 return tooltip.style("visibility", "visible");
 
               })
@@ -311,6 +314,8 @@
     };
 
     //window.setTimeout(chart);
+
+   // window.addEventListener("resize", createDAG);
   </script>
 
 </body>

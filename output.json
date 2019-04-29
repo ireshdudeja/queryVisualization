@@ -2,8 +2,7 @@
     "nodes": [
         {
             "id": "newStreamFromREST",
-            "label": "newStreamFromREST",
-            "group": 0,
+            "label": "newStreamFromRESTAPI",
             "level": 2,
             "data": [
                 {
@@ -27,21 +26,14 @@
                     "count": "25984"
                 }
             ],
-            "operatorData": {
-                "attributes": {
-                    "port": "8099",
-                    "path": "^/publish$",
-                    "RESTMethod": "RESTSource::POST_METHOD"
-                },
-                "return": {
-                    "returnName": "value"
-                }
+            "parameters": {
+                "parameter1": "value1",
+                "parameter2": "value2"
             }
         },
         {
             "id": "extractJson",
             "label": "extractJson",
-            "group": 0,
             "level": 1,
             "data": [
                 {
@@ -65,19 +57,14 @@
                     "count": "25984"
                 }
             ],
-            "operatorData": {
-                "attributes": {
-                    "initializer_list": "{'key', 'data'}"
-                },
-                "return": {
-                    "returnName": "value"
-                }
+            "parameters": {
+                "parameter1": "value1",
+                "parameter2": "value2"
             }
         },
         {
             "id": "slidingWindow",
             "label": "slidingWindow",
-            "group": 0,
             "level": 1,
             "data": [
                 {
@@ -101,22 +88,14 @@
                     "count": "25984"
                 }
             ],
-            "operatorData": {
-                "attributes": {
-                    "WinType": "WindowParams::RowWindow",
-                    "size": "10",
-                    "windowFunc": "",
-                    "evictionInterval": ""
-                },
-                "return": {
-                    "returnName": "value"
-                }
+            "parameters": {
+                "parameter1": "value1",
+                "parameter2": "value2"
             }
         },
         {
             "id": "aggregate",
             "label": "aggregate",
-            "group": 0,
             "level": 1,
             "data": [
                 {
@@ -140,19 +119,14 @@
                     "count": "25984"
                 }
             ],
-            "operatorData": {
-                "attributes": {
-                    "attributeName": "value"
-                },
-                "return": {
-                    "returnName": "value"
-                }
+            "parameters": {
+                "parameter1": "value1",
+                "parameter2": "value2"
             }
         },
         {
             "id": "print",
             "label": "print",
-            "group": 0,
             "level": 2,
             "data": [
                 {
@@ -176,36 +150,28 @@
                     "count": "25984"
                 }
             ],
-            "operatorData": {
-                "attributes": {
-                    "outputStream": "std::cout"
-                },
-                "return": {
-                    "returnName": "value"
-                }
+            "parameters": {
+                "parameter1": "value1",
+                "parameter2": "value2"
             }
         }
     ],
     "links": [
         {
             "target": "extractJson",
-            "source": "newStreamFromREST",
-            "strength": 0.7
+            "source": "newStreamFromREST"
         },
         {
             "target": "slidingWindow",
-            "source": "extractJson",
-            "strength": 0.7
+            "source": "extractJson"
         },
         {
             "target": "aggregate",
-            "source": "slidingWindow",
-            "strength": 0.7
+            "source": "slidingWindow"
         },
         {
             "target": "print",
-            "source": "aggregate",
-            "strength": 0.7
+            "source": "aggregate"
         }
     ]
 }
