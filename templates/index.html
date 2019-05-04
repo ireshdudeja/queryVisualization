@@ -26,7 +26,7 @@
       <div class="col">
         <div class="card">
           <div class="card-header"> Directed Acyclic Graph </div>
-          <div class="card-block">
+          <div class="card-body">
             <div id="dag"> </div>
           </div>
         </div>
@@ -35,27 +35,40 @@
   
     <!-- Row 2 -->
     <div class="row mt-3">
-      <div class="col-sm-4">
+      <div class="col-sm-6">
         <!-- col will also work-->
         <div class="card">
-          <div class="card-header"> Bar Chart</div>
-          <div class="card-block"> <canvas id="barChart"></canvas> </div>
+          <div class="card-header">
+            Operator Statistics
+
+            <!-- Drop down button -->
+            <div class="btn-group float-right">
+              <button type="button" class="btn btn-light btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                aria-expanded="false">
+                <!-- More -->
+              </button>
+              <div class="dropdown-menu">
+                <h6 class="dropdown-header">Select another chart</h6>
+                <a class="dropdown-item" id="bar" onclick="createChart('bar')">Bar Chart</a>
+                <a class="dropdown-item" id="line" onclick="createChart('line')">Line Chart</a>
+                <a class="dropdown-item" id="pie" onclick="createChart('pie')">Pie Chart</a>
+              </div>
+            </div>
+            <!-- Drop down button -->
+
+          </div>
+          <div class="card-body"> <canvas id="parametersChart"></canvas> </div>
         </div>
       </div>
   
-      <div class="col-sm-4">
+      <div class="col-sm-6">
         <div class="card">
-          <div class="card-header"> Line Chart</div>
-          <div class="card-block"> <canvas id="lineChart"></canvas> </div>
+          <div class="card-header"> Stats</div>
+          <div class="card-body" id = "stats-text"> </div>
         </div>
       </div>
   
-      <div class="col-sm-4">
-        <div class="card">
-          <div class="card-header"> Pie Chart</div>
-          <div class="card-block"> <canvas id="pieChart"></canvas> </div>
-        </div>
-      </div>
+
     </div>
     
   </div>
@@ -72,13 +85,13 @@
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script>
 
-    var socket = new WebSocket("ws://localhost:4040/echo");
+    var socket = new WebSocket("ws://localhost:4000/echo");
 
     socket.onopen = function () {
       socket.send("Connection created!!!");
     };
 
-      var returnedBarChart = null, returnedLineChart = null, returnedPieChart = null;
+      var parametersChart = null;
       
       function createDAG() {
 
@@ -95,11 +108,6 @@
             console.log("Nodes: ", nodes);
             var links = myJson.links;
             console.log("Links", links);
-
-            function getNodeColor(node) {
-              return node.level === 2 ? 'OrangeRed' : 'SpringGreen'
-            }
-
 
             var width = window.innerWidth
             var height = window.innerHeight/2
@@ -135,54 +143,7 @@
             })
 
             
-            function selectNode(selectedNode) {
-              console.log("Selected Node: ", selectedNode.data);
-              //console.log("Returned Chart: ", returnedBarChart);
 
-              if(returnedBarChart != null || returnedLineChart != null || returnedPieChart != null) {
-                returnedBarChart.destroy();
-                returnedLineChart.destroy();
-                returnedPieChart.destroy();
-              }
-
-              var citiesArray = selectedNode.data
-              var citiesNamesArray = []
-              var citiesStudentArray = []
-              
-              for (var i = 0; i < citiesArray.length; i++) {
-                var city = citiesArray[i];
-                //console.log(city.name)
-                citiesNamesArray.push(city.name)
-                citiesStudentArray.push(city.count)
-
-              }
-              
-              returnedBarChart = createChart(citiesNamesArray, citiesStudentArray, 'barChart', 'bar')
-              returnedLineChart = createChart(citiesNamesArray, citiesStudentArray, 'lineChart', 'line')
-              returnedPieChart = createChart(citiesNamesArray, citiesStudentArray, 'pieChart', 'pie')
-            }
-
-            function createChart(labelArray, dataArray, chartId, chartType) {
-              let myChart = document.getElementById(chartId).getContext('2d')
-              let massPopChart = new Chart(myChart, {
-                type: chartType, //bar, pie, horizontalBar, line, doughnut, radar, polarArea
-                data: {
-                  labels: labelArray,
-                  datasets: [{
-                    label: 'Students',
-                    data: dataArray,
-                    //backgroundColor:'blue'
-                    backgroundColor: ["rgb(255, 205, 86)","rgb(75, 192, 192)","rgb(54, 162, 235)","rgb(153, 102, 255)","rgb(201, 203, 207)"],
-                    borderWidth: 4,
-                    borderColor: 'gray',
-                    hoverBorderWidth: 4,
-                    hoverBorderColor: 'black'
-                  }]
-                },
-                options: {}
-              });
-              return massPopChart;
-            }
 
             /*
             function mouseover() {
@@ -307,7 +268,94 @@
           });
       };
 
+      function getNodeColor(node) {
+              return node.level === 2 ? 'OrangeRed' : 'SpringGreen'
+            }
+
+            var chartLabels = [];
+              var chartData = [];
+              let newChart;
+              let chartType = 'bar';
+
+      function selectNode(selectedNode) {
+              //d3.event.subject.active = true;
+
+              var thisNode = selectedNode
+              // var connected = data.links.filter(function (e) {
+              //   return e.source === thisNode || e.target === thisNode
+              // });
+              // console.log("This Node: ", thisNode);
+               
+               // On node selection we are making chartData empty
+              chartLabels = []
+              chartData = []
+              
+              var parametersObj = selectedNode.parameters
+             
+              Object.keys(parametersObj).forEach(function (key) {
+                console.log(key + '=' + parametersObj[key]);
+                chartLabels.push(key)
+                chartData.push(parametersObj[key])
+              });
+
+              createChart(chartType)
+              console.log("Parameters Object: ", parametersObj);
+              showStatsText(parametersObj)
+            }
+
+            function createChart(type) {
+
+              let myChart = document.getElementById("parametersChart").getContext('2d')
+
+              if(newChart != null) {
+                newChart.destroy();
+              }
+
+              newChart = new Chart(myChart, {
+                type: type, //bar, pie, horizontalBar, line, doughnut, radar, polarArea
+                data: {
+                  labels: chartLabels,
+                  datasets: [{
+                    label: 'Stats',
+                    data: chartData,
+                    //backgroundColor:'blue'
+                    backgroundColor: ["rgb(255, 205, 86)","rgb(75, 192, 192)","rgb(54, 162, 235)","rgb(153, 102, 255)","rgb(201, 203, 207)"],
+                    borderWidth: 4,
+                    borderColor: 'gray',
+                    hoverBorderWidth: 4,
+                    hoverBorderColor: 'black'
+                  }]
+                },
+                options: {}
+              });
+
+              chartType = type
+            }
+
+            function showStatsText(paramObj) {
+                let cardBody = document.getElementById("stats-text");
+                while (cardBody.firstChild) {
+                  cardBody.removeChild(cardBody.firstChild);
+                }
+
+                Object.keys(paramObj).forEach(function (key) {
+                  console.log(key + '=' + paramObj[key]);
+
+                  let outerDiv = cardBody.appendChild(document.createElement('div'));
+                  outerDiv.setAttribute("class", "card bg-secondary text-white");
+                  let innerDiv = outerDiv.appendChild(document.createElement('div'))
+                  innerDiv.setAttribute("class", "card-body")
+                  innerDiv.innerHTML = key + ' = ' + paramObj[key]
+
+                  cardBody.appendChild(document.createElement('br'));
+
+                });
+
+              }
+            
+
     createDAG();
+
     socket.onmessage = function (e) {
       d3.select("#dag").select("svg").remove();
       createDAG()

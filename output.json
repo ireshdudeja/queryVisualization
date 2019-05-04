@@ -1,177 +1,50 @@
 {
-    "nodes": [
-        {
-            "id": "newStreamFromREST",
-            "label": "newStreamFromRESTAPI",
-            "level": 2,
-            "data": [
-                {
-                    "name": "Erfurt",
-                    "count": "204994"
-                },
-                {
-                    "name": "Jena",
-                    "count": "205129"
-                },
-                {
-                    "name": "Gera",
-                    "count": "99262"
-                },
-                {
-                    "name": "Weimar",
-                    "count": "65479"
-                },
-                {
-                    "name": "Ilmenau",
-                    "count": "25984"
-                }
-            ],
-            "parameters": {
-                "parameter1": "value1",
-                "parameter2": "value2"
-            }
-        },
-        {
-            "id": "extractJson",
-            "label": "extractJson",
-            "level": 1,
-            "data": [
-                {
-                    "name": "Munich",
-                    "count": "104994"
-                },
-                {
-                    "name": "Jena",
-                    "count": "205129"
-                },
-                {
-                    "name": "Gera",
-                    "count": "99262"
-                },
-                {
-                    "name": "Weimar",
-                    "count": "65479"
-                },
-                {
-                    "name": "Ilmenau",
-                    "count": "25984"
-                }
-            ],
-            "parameters": {
-                "parameter1": "value1",
-                "parameter2": "value2"
-            }
-        },
-        {
-            "id": "slidingWindow",
-            "label": "slidingWindow",
-            "level": 1,
-            "data": [
-                {
-                    "name": "Berlin",
-                    "count": "200994"
-                },
-                {
-                    "name": "Jena",
-                    "count": "205129"
-                },
-                {
-                    "name": "Gera",
-                    "count": "99262"
-                },
-                {
-                    "name": "Weimar",
-                    "count": "65479"
-                },
-                {
-                    "name": "Ilmenau",
-                    "count": "25984"
-                }
-            ],
-            "parameters": {
-                "parameter1": "value1",
-                "parameter2": "value2"
-            }
-        },
-        {
-            "id": "aggregate",
-            "label": "aggregate",
-            "level": 1,
-            "data": [
-                {
-                    "name": "Hamburg",
-                    "count": "200094"
-                },
-                {
-                    "name": "Jena",
-                    "count": "205129"
-                },
-                {
-                    "name": "Gera",
-                    "count": "99262"
-                },
-                {
-                    "name": "Weimar",
-                    "count": "65479"
-                },
-                {
-                    "name": "Ilmenau",
-                    "count": "25984"
-                }
-            ],
-            "parameters": {
-                "parameter1": "value1",
-                "parameter2": "value2"
-            }
-        },
-        {
-            "id": "print",
-            "label": "print",
-            "level": 2,
-            "data": [
-                {
-                    "name": "Stuttgart",
-                    "count": "200004"
-                },
-                {
-                    "name": "Jena",
-                    "count": "205129"
-                },
-                {
-                    "name": "Gera",
-                    "count": "99262"
-                },
-                {
-                    "name": "Weimar",
-                    "count": "65479"
-                },
-                {
-                    "name": "Ilmenau",
-                    "count": "25984"
-                }
-            ],
-            "parameters": {
-                "parameter1": "value1",
-                "parameter2": "value2"
-            }
+    "nodes":[
+      {
+        "id": "1",
+        "label":"generator",
+        "level": 2,
+        "parameters":{
+          "num_tuples":"50",
+          "max_key":"20",
+          "min_key":"7"
         }
+      },
+      {
+        "id":"2",
+        "label":"filter > 10",
+        "level":1,
+        "parameters":{
+          "num_tuples":"40",
+          "positive":"1",
+          "max_key":"23",
+          "min_key":"10"
+        }
+      },
+      {
+        "id": "3",
+        "label": "digits",
+        "level":1,
+        "parameters":{
+          "num_tuples":"40",
+          "max_key":"34",
+          "max_value":"10000"
+        }
+      },
+      {
+        "id":"4",
+        "label": "group result",
+        "level":1,
+        "parameters":{
+          "num_tuples":"25",
+          "max_key":"14",
+          "max_value":"1200"
+        }
+      }    
     ],
-    "links": [
-        {
-            "target": "extractJson",
-            "source": "newStreamFromREST"
-        },
-        {
-            "target": "slidingWindow",
-            "source": "extractJson"
-        },
-        {
-            "target": "aggregate",
-            "source": "slidingWindow"
-        },
-        {
-            "target": "print",
-            "source": "aggregate"
-        }
+    "links":[
+      {"source":"1", "target":"2"},
+      {"source":"2", "target":"3"},
+      {"source":"3", "target":"4"}
     ]
-}
+  }

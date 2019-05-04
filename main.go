@@ -14,10 +14,10 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-type City struct {
-	Name          string `json:"name"`
-	StudentsCount string `json:"count"`
-}
+// type City struct {
+// 	Name          string `json:"name"`
+// 	StudentsCount string `json:"count"`
+// }
 
 // type OperatorData struct {
 // 	Attributes map[string]string `json:"attributes"`
@@ -25,10 +25,10 @@ type City struct {
 // }
 
 type Node struct {
-	ID         string                 `json:"id"`
-	Label      string                 `json:"label"`
-	Level      int                    `json:"level"`
-	Cities     []City                 `json:"data"`
+	ID    string `json:"id"`
+	Label string `json:"label"`
+	Level int    `json:"level"`
+	//Cities     []City                 `json:"data"`
 	Parameters map[string]interface{} `json:"parameters"`
 	//Info   OperatorData `json:"operatorData"`
 }
@@ -79,7 +79,7 @@ func main() {
 func determineListenAddress() (string, error) {
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "4040"
+		port = "4000"
 		//return "", fmt.Errorf("$PORT not set")
 	}
 	log.Println("Server Listening on Port Number: " + port)
