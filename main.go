@@ -64,7 +64,7 @@ func main() {
 	router.HandleFunc("/", showQueryHandler).Methods("GET")
 	router.HandleFunc("/api", displayQueryJSONHandler)
 	router.HandleFunc("/api/json", processReceivedQueryJSONHandler)
-	//router.HandleFunc("/modify", OperatorParametersHandler).Methods("GET")
+	router.HandleFunc("/modify", OperatorParametersHandler).Methods("GET")
 	router.HandleFunc("/echo", wsHandler)
 	go echo()
 
@@ -108,50 +108,56 @@ func showQueryHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	v := r.URL.Query()
-
-	// fmt.Printf("Query is: %v", v)
-
-	operatorId := v.Get("id")
-	// email := v.Get("email")
-	// fmt.Printf("Operator ID: %s, Email: %s", operatorId, email)
-
+	// Following commented code checks if the
+	// parameters used in GET request matches
+	// with parameters present in json file for
+	// a particular opertorId
 	/*
-		Removing key value pair for "id"
-		otherwise allParametersExists will be false for
-		_, ok := node.Parameters[key] in code below
-	*/
-	delete(v, "id")
+		v := r.URL.Query()
 
-	for _, node := range query.Nodes {
+		// fmt.Printf("Query is: %v", v)
 
-		fmt.Printf("Node name: %s\n", node.Label)
-		if node.ID == operatorId {
-			allParametersExists := true
+		operatorId := v.Get("id")
+		// email := v.Get("email")
+		// fmt.Printf("Operator ID: %s, Email: %s", operatorId, email)
 
-			fmt.Printf("  ID exists\n")
-			for key, value := range v {
 
-				if _, ok := node.Parameters[key]; ok {
-					fmt.Printf("	KEY EXISTS and NEW VALUE. %s = %s\n", key, value)
+			// Removing key value pair for "id"
+			// otherwise allParametersExists will be false for
+			// _, ok := node.Parameters[key] in code below
 
-				} else {
-					allParametersExists = false
-					fmt.Println("allParametersExists value ", allParametersExists, value)
-				}
+		delete(v, "id")
 
-			}
+		for _, node := range query.Nodes {
 
-			if allParametersExists {
+			fmt.Printf("Node name: %s\n", node.Label)
+			if node.ID == operatorId {
+				allParametersExists := true
+
+				fmt.Printf("  ID exists\n")
 				for key, value := range v {
-					node.Parameters[key] = value[0]
+
+					if _, ok := node.Parameters[key]; ok {
+						fmt.Printf("	KEY EXISTS and NEW VALUE. %s = %s\n", key, value)
+
+					} else {
+						allParametersExists = false
+						fmt.Println("allParametersExists value ", allParametersExists, value)
+					}
+
 				}
-				fmt.Printf("Updated Paramters Dict %v", node.Parameters)
+
+				if allParametersExists {
+					for key, value := range v {
+						node.Parameters[key] = value[0]
+					}
+					fmt.Printf("Updated Paramters Dict %v", node.Parameters)
+
+				}
 
 			}
-
 		}
-	}
+	*/
 
 }
 
@@ -182,16 +188,55 @@ func readJSONFile(w http.ResponseWriter) {
 	// unmarshal byteArray
 	json.Unmarshal(byteValue, &query)
 
-	fmt.Printf("\n Only Paramters: %v\n", query.Nodes[0].Parameters)
+	fmt.Printf("\n Only Paramters of first node: %v\n", query.Nodes[0].Parameters)
 }
 
-// func OperatorParametersHandler(w http.ResponseWriter, r *http.Request) {
-// 	v := r.URL.Query()
+func OperatorParametersHandler(w http.ResponseWriter, r *http.Request) {
 
-// 	username := v.Get("username")
-// 	email := v.Get("email")
-// 	fmt.Printf("User Name: %s, Email: %s", username, email)
-// }
+	fmt.Printf("Function called!!!!\n")
+
+	v := r.URL.Query() // will get map/dict of the query string
+
+	operatorId := v.Get("id") // Get operator ID
+	idExists := false
+
+	delete(v, "id") // delete a dict element which has key "id"
+
+	for i, node := range query.Nodes {
+
+		fmt.Printf("Node name: %s\n", node.Label)
+
+		// To check if the id entered n GET request is valid
+		if node.ID == operatorId {
+
+			fmt.Printf("  ID exists\n")
+			idExists = true
+			for key, value := range v {
+				//fmt.Printf("KEY, VALUE! %s = %s\n", key, value)
+				node.Parameters[key] = value[0]
+			}
+			fmt.Printf("\nParamters Changed: %v\n", node.Parameters)
+			query.Nodes[i] = node
+		}
+
+	}
+
+	fmt.Printf("\n ******** NODES: ******* \n %v", query.Nodes)
+
+	if idExists == false {
+		fmt.Printf("\nOperator id doesn't exist and Paramters can't be Changed!\n")
+	} else {
+		b, err := json.Marshal(query)
+		if err != nil {
+			panic(err)
+		}
+
+		err = ioutil.WriteFile("output.json", b, 0644)
+		log.Print("Updated Paramters written")
+		go writer(&query)
+	}
+
+}
 
 func displayQueryJSONHandler(w http.ResponseWriter, r *http.Request) {
 
