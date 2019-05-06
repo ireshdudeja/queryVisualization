@@ -24,9 +24,9 @@
     <!-- Row 1 -->
     <div class="row mt-3">
       <div class="col">
-        <div class="card">
+        <div class="card border-dark mb-3">
           <div class="card-header"> Directed Acyclic Graph </div>
-          <div class="card-block">
+          <div class="card-body">
             <div id="dag"> </div>
           </div>
         </div>
@@ -34,28 +34,47 @@
     </div>
   
     <!-- Row 2 -->
-    <div class="row mt-3">
-      <div class="col-sm-4">
-        <!-- col will also work-->
-        <div class="card">
-          <div class="card-header"> Bar Chart</div>
-          <div class="card-block"> <canvas id="barChart"></canvas> </div>
+    <div class="row mt-3" id="stats-row" style="display:none;"> <!-- id="stats-row" style="display:none;" -->
+      
+      <div class="col">
+        <div class="card-deck">
+          <!-- <div class="col-sm-6"> -->
+          <!-- col will also work-->
+          <div class="card border-info mb-3">
+            <div class="card-header">
+              Operator Statistics - Graphical
+      
+              <!-- Drop down button -->
+              <div class="btn-group float-right">
+                <button type="button" class="btn btn-light btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                  aria-expanded="false">
+                  <!-- More -->
+                </button>
+                <div class="dropdown-menu">
+                  <h6 class="dropdown-header">Select another chart</h6>
+                  <a class="dropdown-item" id="bar" onclick="createChart('bar')">Bar Chart</a>
+                  <a class="dropdown-item" id="line" onclick="createChart('line')">Line Chart</a>
+                  <a class="dropdown-item" id="pie" onclick="createChart('pie')">Pie Chart</a>
+                </div>
+              </div>
+              <!-- Drop down button -->
+      
+            </div>
+            <div class="card-body"> <canvas id="parametersChart"></canvas> </div>
+          </div>
+          <!-- </div> -->
+      
+          <!-- <div class="col-sm-6"> -->
+          <div class="card border-info mb-3">
+            <div class="card-header"> Operator Statistics - Textual</div>
+            <div class="card-body" id="stats-text"> </div>
+          </div>
+          <!-- </div> -->
         </div>
       </div>
+
   
-      <div class="col-sm-4">
-        <div class="card">
-          <div class="card-header"> Line Chart</div>
-          <div class="card-block"> <canvas id="lineChart"></canvas> </div>
-        </div>
-      </div>
-  
-      <div class="col-sm-4">
-        <div class="card">
-          <div class="card-header"> Pie Chart</div>
-          <div class="card-block"> <canvas id="pieChart"></canvas> </div>
-        </div>
-      </div>
+
     </div>
     
   </div>
@@ -72,13 +91,13 @@
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script>
 
-    var socket = new WebSocket("ws://localhost:4040/echo");
+    var socket = new WebSocket("ws://localhost:4000/echo");
 
     socket.onopen = function () {
       socket.send("Connection created!!!");
     };
 
-      var returnedBarChart = null, returnedLineChart = null, returnedPieChart = null;
+      var parametersChart = null;
       
       function createDAG() {
 
@@ -92,14 +111,9 @@
           }).then(function (myJson) {
 
             var nodes = myJson.nodes;
-            console.log(nodes);
+            console.log("Nodes: ", nodes);
             var links = myJson.links;
-            console.log(links);
-
-            function getNodeColor(node) {
-              return node.level === 2 ? 'OrangeRed' : 'SpringGreen'
-            }
-
+            console.log("Links", links);
 
             var width = window.innerWidth
             var height = window.innerHeight/2
@@ -111,7 +125,7 @@
             var linkForce = d3
               .forceLink()
               .id(function (link) { return link.id })
-              .strength(function (link) { return link.strength })
+              //.strength(function (link) { return link.strength })
 
             var simulation = d3
               .forceSimulation()
@@ -134,69 +148,23 @@
               node.fy = null
             })
 
-            
-            function selectNode(selectedNode) {
-              console.log(selectedNode.data);
-              console.log(returnedBarChart);
-
-              if(returnedBarChart != null || returnedLineChart != null || returnedPieChart != null) {
-                returnedBarChart.destroy();
-                returnedLineChart.destroy();
-                returnedPieChart.destroy();
-              }
-
-              var citiesArray = selectedNode.data
-              var citiesNamesArray = []
-              var citiesStudentArray = []
-              
-              for (var i = 0; i < citiesArray.length; i++) {
-                var city = citiesArray[i];
-                //console.log(city.name)
-                citiesNamesArray.push(city.name)
-                citiesStudentArray.push(city.count)
-
-              }
-              
-              returnedBarChart = createChart(citiesNamesArray, citiesStudentArray, 'barChart', 'bar')
-              returnedLineChart = createChart(citiesNamesArray, citiesStudentArray, 'lineChart', 'line')
-              returnedPieChart = createChart(citiesNamesArray, citiesStudentArray, 'pieChart', 'pie')
-            }
-
-            function createChart(labelArray, dataArray, chartId, chartType) {
-              let myChart = document.getElementById(chartId).getContext('2d')
-              let massPopChart = new Chart(myChart, {
-                type: chartType, //bar, pie, horizontalBar, line, doughnut, radar, polarArea
-                data: {
-                  labels: labelArray,
-                  datasets: [{
-                    label: 'Students',
-                    data: dataArray,
-                    //backgroundColor:'blue'
-                    backgroundColor: ["rgb(255, 205, 86)","rgb(75, 192, 192)","rgb(54, 162, 235)","rgb(153, 102, 255)","rgb(201, 203, 207)"],
-                    borderWidth: 4,
-                    borderColor: 'gray',
-                    hoverBorderWidth: 4,
-                    hoverBorderColor: 'black'
-                  }]
-                },
-                options: {}
-              });
-              return massPopChart;
-            }
-
+  
             function mouseover() {
-              d3.select("svg").select("nodes").select("circle").transition()
-                .duration(750)
-                .attr("r", 16);
-              console.log("Mouseover called!");
+              d3.select(this)
+                .transition()
+                .duration(350)
+                .attr("r", 14)
+              //.style("fill", "lightsteelblue");
+              console.log("Node is:", this)
             }
 
             function mouseout() {
-              d3.select("svg").select("nodes").select("circle").transition()
-                .duration(750)
-                .attr("r", 10);
-                console.log("Mouseout called!");
+              d3.select(this)
+                .transition()
+                .duration(350)
+                .attr("r", 11)
             }
+            
 
             var tooltip = d3.select("body")
               .append("div")
@@ -230,53 +198,26 @@
               .selectAll("circle")
               .data(nodes)
               .enter().append("circle")
-              .attr("r", 10)
+              .attr("r", 11)
               .attr("fill", getNodeColor)
+              .attr("stroke","black")
               .call(dragDrop)
               .on('click', selectNode)
+              .on("mouseover",mouseover)
+	            .on("mouseout", mouseout);
+
+              /* Display Tooltip
+
               .on("mouseover", function(node){
-                tooltip.text(JSON.stringify(node.operatorData.attributes));
+                tooltip.text(JSON.stringify(node.parameters));
+                console.log("Mouse over:", node.parameters);
                 return tooltip.style("visibility", "visible");
 
               })
 	            .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
 	            .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
-
-            // var nodeElements = svg.append("g")
-            //   .attr("class", "nodes")
-            //   .selectAll("image")
-            //   .data(nodes)
-            //   .enter().append("svg:image")
-            //   .attr('width', 20)
-            //   .attr('height', 24)
-            //   .attr("xlink:href", "https://mdn.mozillademos.org/files/6457/mdn_logo_only_color.png")
-            //   .call(dragDrop)
-            //   .on('click', selectNode)
-
-            // var nodeElements = svg.append("g")
-            //   .attr("class", "nodes")
-            //   .selectAll("div")
-            //   .data(nodes)
-            //   .enter().append("div")
-            //   //.attr("id", "barChart")
-            //   .attr("style", "border:1px solid #000000;")
-            //   .call(dragDrop)
-            //   .on('click', selectNode)
-
-              // var nodeElements = svg.append("g")
-              // .attr("class", "nodes")
-              // .selectAll("svg")
-              // .data(nodes)
-              // .enter().append("svg")
-              // .attr("width", 10)
-              // .attr("height", 10)
-              // .style("background-color", "green")
-              // .call(dragDrop)
-              // .on('click', selectNode)
-
-            // var canvasElements = nodeElements.append("canvas")
-            //   .attr("id", "barChart")
-            //   .attr("style", "height:40; width:40; border:1px solid #000000;")
+              
+              */
 
             var textElements = svg.append("g")
               .attr("class", "texts")
@@ -304,13 +245,113 @@
           });
       };
 
+      function getNodeColor(node) {
+              return node.level === 2 ? 'OrangeRed' : 'SpringGreen'
+            }
+
+            var chartLabels = [];
+              var chartData = [];
+              let newChart;
+              let chartType = 'bar';
+              var selected;
+
+      function selectNode(selectedNode) {
+          // Select unselect  node
+          // if (!selected) {
+          //   selected = this;
+          //   d3.select(selected).style('stroke', 'blue');
+          // }
+          // else if (selected == this) {
+          //   d3.select(selected).style('stroke', 'black');
+          //   selected = undefined;
+          // }
+          
+          document.getElementById("stats-row").style.display = "block";
+
+          var thisNode = selectedNode
+          // On node selection we are making chartData empty
+          chartLabels = []
+          chartData = []
+
+          var parametersObj = selectedNode.parameters
+
+          Object.keys(parametersObj).forEach(function (key) {
+            // console.log(key + '=' + parametersObj[key]);
+            chartLabels.push(key)
+            chartData.push(parametersObj[key])
+          });
+
+          createChart(chartType)
+          showStatsText(parametersObj)
+        }
+
+            function createChart(type) {
+
+              let myChart = document.getElementById("parametersChart").getContext('2d')
+
+              if(newChart != null) {
+                newChart.destroy();
+              }
+
+              newChart = new Chart(myChart, {
+                type: type, //bar, pie, horizontalBar, line, doughnut, radar, polarArea
+                data: {
+                  labels: chartLabels,
+                  datasets: [{
+                    label: '',
+                    data: chartData,
+                    //backgroundColor:'blue'
+                    backgroundColor: ["rgb(255, 99, 132)","rgb(54, 162, 235)","rgb(255, 205, 86)"],
+                    borderWidth: 2,
+                    borderColor: ["rgb(255, 99, 132)","rgb(54, 162, 235)","rgb(255, 205, 86)"],
+                    hoverBorderWidth: 2,
+                    //hoverBorderColor: 'black',
+                    lineTension: 0.1,
+                    fill: false
+                  }]
+                },
+                options: {
+                  legend: {
+                    display: false
+                  }
+                }
+              });
+
+              chartType = type
+            }
+
+            function showStatsText(paramObj) {
+                let cardBody = document.getElementById("stats-text");
+                while (cardBody.firstChild) {
+                  cardBody.removeChild(cardBody.firstChild);
+                }
+
+                Object.keys(paramObj).forEach(function (key) {
+                  console.log(key + '=' + paramObj[key]);
+
+                  let outerDiv = cardBody.appendChild(document.createElement('div'));
+                  outerDiv.setAttribute("class", "card bg-light mb-3");
+                  let innerDiv = outerDiv.appendChild(document.createElement('div'))
+                  innerDiv.setAttribute("class", "card-body")
+                  innerDiv.innerHTML = key + ' = ' + paramObj[key]
+
+                  cardBody.appendChild(document.createElement('br'));
+
+                });
+
+              }
+            
+
     createDAG();
+
     socket.onmessage = function (e) {
       d3.select("#dag").select("svg").remove();
       createDAG()
     };
 
     //window.setTimeout(chart);
+
+   // window.addEventListener("resize", createDAG);
   </script>
 
 </body>
