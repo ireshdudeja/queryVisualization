@@ -24,7 +24,7 @@
     <!-- Row 1 -->
     <div class="row mt-3">
       <div class="col">
-        <div class="card">
+        <div class="card border-dark mb-3">
           <div class="card-header"> Directed Acyclic Graph </div>
           <div class="card-body">
             <div id="dag"> </div>
@@ -34,39 +34,45 @@
     </div>
   
     <!-- Row 2 -->
-    <div class="row mt-3">
-      <div class="col-sm-6">
-        <!-- col will also work-->
-        <div class="card">
-          <div class="card-header">
-            Operator Statistics
-
-            <!-- Drop down button -->
-            <div class="btn-group float-right">
-              <button type="button" class="btn btn-light btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-                aria-expanded="false">
-                <!-- More -->
-              </button>
-              <div class="dropdown-menu">
-                <h6 class="dropdown-header">Select another chart</h6>
-                <a class="dropdown-item" id="bar" onclick="createChart('bar')">Bar Chart</a>
-                <a class="dropdown-item" id="line" onclick="createChart('line')">Line Chart</a>
-                <a class="dropdown-item" id="pie" onclick="createChart('pie')">Pie Chart</a>
+    <div class="row mt-3" id="stats-row" style="display:none;"> <!-- id="stats-row" style="display:none;" -->
+      
+      <div class="col">
+        <div class="card-deck">
+          <!-- <div class="col-sm-6"> -->
+          <!-- col will also work-->
+          <div class="card border-info mb-3">
+            <div class="card-header">
+              Operator Statistics - Graphical
+      
+              <!-- Drop down button -->
+              <div class="btn-group float-right">
+                <button type="button" class="btn btn-light btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                  aria-expanded="false">
+                  <!-- More -->
+                </button>
+                <div class="dropdown-menu">
+                  <h6 class="dropdown-header">Select another chart</h6>
+                  <a class="dropdown-item" id="bar" onclick="createChart('bar')">Bar Chart</a>
+                  <a class="dropdown-item" id="line" onclick="createChart('line')">Line Chart</a>
+                  <a class="dropdown-item" id="pie" onclick="createChart('pie')">Pie Chart</a>
+                </div>
               </div>
+              <!-- Drop down button -->
+      
             </div>
-            <!-- Drop down button -->
-
+            <div class="card-body"> <canvas id="parametersChart"></canvas> </div>
           </div>
-          <div class="card-body"> <canvas id="parametersChart"></canvas> </div>
+          <!-- </div> -->
+      
+          <!-- <div class="col-sm-6"> -->
+          <div class="card border-info mb-3">
+            <div class="card-header"> Operator Statistics - Textual</div>
+            <div class="card-body" id="stats-text"> </div>
+          </div>
+          <!-- </div> -->
         </div>
       </div>
-  
-      <div class="col-sm-6">
-        <div class="card">
-          <div class="card-header"> Stats</div>
-          <div class="card-body" id = "stats-text"> </div>
-        </div>
-      </div>
+
   
 
     </div>
@@ -142,24 +148,23 @@
               node.fy = null
             })
 
-            
-
-
-            /*
+  
             function mouseover() {
-              d3.select("svg").select("nodes").select("circle").transition()
-                .duration(750)
-                .attr("r", 16);
-              console.log("Mouseover called!");
+              d3.select(this)
+                .transition()
+                .duration(350)
+                .attr("r", 14)
+              //.style("fill", "lightsteelblue");
+              console.log("Node is:", this)
             }
 
             function mouseout() {
-              d3.select("svg").select("nodes").select("circle").transition()
-                .duration(750)
-                .attr("r", 10);
-                console.log("Mouseout called!");
+              d3.select(this)
+                .transition()
+                .duration(350)
+                .attr("r", 11)
             }
-            */
+            
 
             var tooltip = d3.select("body")
               .append("div")
@@ -193,10 +198,16 @@
               .selectAll("circle")
               .data(nodes)
               .enter().append("circle")
-              .attr("r", 10)
+              .attr("r", 11)
               .attr("fill", getNodeColor)
+              .attr("stroke","black")
               .call(dragDrop)
               .on('click', selectNode)
+              .on("mouseover",mouseover)
+	            .on("mouseout", mouseout);
+
+              /* Display Tooltip
+
               .on("mouseover", function(node){
                 tooltip.text(JSON.stringify(node.parameters));
                 console.log("Mouse over:", node.parameters);
@@ -205,42 +216,8 @@
               })
 	            .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
 	            .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
-
-            // var nodeElements = svg.append("g")
-            //   .attr("class", "nodes")
-            //   .selectAll("image")
-            //   .data(nodes)
-            //   .enter().append("svg:image")
-            //   .attr('width', 20)
-            //   .attr('height', 24)
-            //   .attr("xlink:href", "https://mdn.mozillademos.org/files/6457/mdn_logo_only_color.png")
-            //   .call(dragDrop)
-            //   .on('click', selectNode)
-
-            // var nodeElements = svg.append("g")
-            //   .attr("class", "nodes")
-            //   .selectAll("div")
-            //   .data(nodes)
-            //   .enter().append("div")
-            //   //.attr("id", "barChart")
-            //   .attr("style", "border:1px solid #000000;")
-            //   .call(dragDrop)
-            //   .on('click', selectNode)
-
-              // var nodeElements = svg.append("g")
-              // .attr("class", "nodes")
-              // .selectAll("svg")
-              // .data(nodes)
-              // .enter().append("svg")
-              // .attr("width", 10)
-              // .attr("height", 10)
-              // .style("background-color", "green")
-              // .call(dragDrop)
-              // .on('click', selectNode)
-
-            // var canvasElements = nodeElements.append("canvas")
-            //   .attr("id", "barChart")
-            //   .attr("style", "height:40; width:40; border:1px solid #000000;")
+              
+              */
 
             var textElements = svg.append("g")
               .attr("class", "texts")
@@ -276,32 +253,37 @@
               var chartData = [];
               let newChart;
               let chartType = 'bar';
+              var selected;
 
       function selectNode(selectedNode) {
-              //d3.event.subject.active = true;
+          // Select unselect  node
+          // if (!selected) {
+          //   selected = this;
+          //   d3.select(selected).style('stroke', 'blue');
+          // }
+          // else if (selected == this) {
+          //   d3.select(selected).style('stroke', 'black');
+          //   selected = undefined;
+          // }
+          
+          document.getElementById("stats-row").style.display = "block";
 
-              var thisNode = selectedNode
-              // var connected = data.links.filter(function (e) {
-              //   return e.source === thisNode || e.target === thisNode
-              // });
-              // console.log("This Node: ", thisNode);
-               
-               // On node selection we are making chartData empty
-              chartLabels = []
-              chartData = []
-              
-              var parametersObj = selectedNode.parameters
-             
-              Object.keys(parametersObj).forEach(function (key) {
-                console.log(key + '=' + parametersObj[key]);
-                chartLabels.push(key)
-                chartData.push(parametersObj[key])
-              });
+          var thisNode = selectedNode
+          // On node selection we are making chartData empty
+          chartLabels = []
+          chartData = []
 
-              createChart(chartType)
-              console.log("Parameters Object: ", parametersObj);
-              showStatsText(parametersObj)
-            }
+          var parametersObj = selectedNode.parameters
+
+          Object.keys(parametersObj).forEach(function (key) {
+            // console.log(key + '=' + parametersObj[key]);
+            chartLabels.push(key)
+            chartData.push(parametersObj[key])
+          });
+
+          createChart(chartType)
+          showStatsText(parametersObj)
+        }
 
             function createChart(type) {
 
@@ -316,17 +298,23 @@
                 data: {
                   labels: chartLabels,
                   datasets: [{
-                    label: 'Stats',
+                    label: '',
                     data: chartData,
                     //backgroundColor:'blue'
-                    backgroundColor: ["rgb(255, 205, 86)","rgb(75, 192, 192)","rgb(54, 162, 235)","rgb(153, 102, 255)","rgb(201, 203, 207)"],
-                    borderWidth: 4,
-                    borderColor: 'gray',
-                    hoverBorderWidth: 4,
-                    hoverBorderColor: 'black'
+                    backgroundColor: ["rgb(255, 99, 132)","rgb(54, 162, 235)","rgb(255, 205, 86)"],
+                    borderWidth: 2,
+                    borderColor: ["rgb(255, 99, 132)","rgb(54, 162, 235)","rgb(255, 205, 86)"],
+                    hoverBorderWidth: 2,
+                    //hoverBorderColor: 'black',
+                    lineTension: 0.1,
+                    fill: false
                   }]
                 },
-                options: {}
+                options: {
+                  legend: {
+                    display: false
+                  }
+                }
               });
 
               chartType = type
@@ -342,7 +330,7 @@
                   console.log(key + '=' + paramObj[key]);
 
                   let outerDiv = cardBody.appendChild(document.createElement('div'));
-                  outerDiv.setAttribute("class", "card bg-secondary text-white");
+                  outerDiv.setAttribute("class", "card bg-light mb-3");
                   let innerDiv = outerDiv.appendChild(document.createElement('div'))
                   innerDiv.setAttribute("class", "card-body")
                   innerDiv.innerHTML = key + ' = ' + paramObj[key]

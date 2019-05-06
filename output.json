@@ -28,7 +28,7 @@
         "parameters":{
           "num_tuples":"40",
           "max_key":"34",
-          "max_value":"10000"
+          "max_value":"100"
         }
       },
       {
@@ -38,7 +38,7 @@
         "parameters":{
           "num_tuples":"25",
           "max_key":"14",
-          "max_value":"1200"
+          "max_value":"120"
         }
       }    
     ],
