@@ -2,368 +2,599 @@
 <html lang="en" dir="ltr">
 
 <head>
-  <title>Query Visualization</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+    <title>Query Visualization</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <link rel="shortcut icon" href="favicon.ico"> -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #858796;
+            text-align: left;
+            background-color: #fff;
+        }
+
+        svg {
+            /* background-color: #fff; */
+            background-color: rgba(0, 0, 0, 0);
+        }
+    
+        .card {
+            position: relative;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+            -ms-flex-direction: column;
+            flex-direction: column;
+            min-width: 0;
+            word-wrap: break-word;
+            background-color: #fff;
+            background-clip: border-box;
+            border: 1px solid #e3e6f0;
+            border-radius: 0.35rem;
+        }
+
+    
+        .card-header {
+            padding: .75rem 1.25rem;
+            margin-bottom: 0;
+            background-color: rgba(0, 0, 0, 0);
+            /* border-bottom: 1px solid rgba(0, 0, 0, .8); */
+        }
+
+        .card-columns {
+                column-count: 4;
+            }
+    </style>
 </head>
 
 <body class="pt-5">
-  <!-- pt-5 to add space between below navigation bar -->
+    <!-- pt-5 to add space between below navigation bar -->
 
-  <!-- Header -->
-  <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#"> Query Visualization </a>
-  </nav>
+    <div class="wrapper">
 
-  <div class="container-fluid">
+        <!-- Navbar -->
+        <nav class="navbar navbar-dark bg-primary fixed-top flex-md-nowrap p-1 shadow">
+            <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#"> Query Visualization </a>
+        </nav>
+        <!-- End Navbar -->
 
-    <!-- Row 1 -->
-    <div class="row mt-3">
-      <div class="col">
-        <div class="card border-dark mb-3">
-          <div class="card-header"> Directed Acyclic Graph </div>
-          <div class="card-body">
-            <div id="dag"> </div>
-          </div>
-        </div>
-      </div>
-    </div>
+        <div class="content">
+                <!-- container-fluid -->
+            <div class="container">
 
-    <!-- Row 2 -->
-    <div class="row mt-3" id="stats-row" style="display:none;">
-      <!-- id="stats-row" style="display:none;" -->
+                <!-- Row 1 -->
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <div class="card py-2 shadow-lg rounded">
+                            <!--card border-dark mb-3-->
+                            <div class="card-header">
+                                <h6 class="m-0 font-weight-normal text-primary">
+                                    Directed Acyclic Graph Representation
+                                </h6>
+                            </div>
 
-      <div class="col">
-        <div class="card-deck">
-          <!-- <div class="col-sm-6"> -->
-          <!-- col will also work-->
-          <div class="card border-info mb-3">
-            <div class="card-header">
-              Operator Statistics - Graphical
-
-              <!-- Drop down button -->
-              <div class="btn-group float-right">
-                <button type="button" class="btn btn-light btn-sm dropdown-toggle" data-toggle="dropdown"
-                  aria-haspopup="true" aria-expanded="false">
-                  <!-- More -->
-                </button>
-                <div class="dropdown-menu">
-                  <h6 class="dropdown-header">Select another chart</h6>
-                  <a class="dropdown-item" id="bar" onclick="createChart('bar')">Bar Chart</a>
-                  <a class="dropdown-item" id="line" onclick="createChart('line')">Line Chart</a>
-                  <a class="dropdown-item" id="pie" onclick="createChart('pie')">Pie Chart</a>
+                            <div class="card-body">
+                                <div id="dag">
+                                    <!-- <svg id="chart" width="960" height="500"
+                                    viewBox="0 0 960 500"
+                                    preserveAspectRatio="xMidYMid meet">
+                                  </svg> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
-              <!-- Drop down button -->
+                <!-- End Row 1 -->
+
+                <!-- Row 2 -->
+                <div class="row mt-3" id="stats-row" style="display:none;">
+                    <!-- id="stats-row" style="display:none;" -->
+
+                    <div class="col">
+                        <div class="card-deck">
+                            <!-- <div class="col-sm-6"> -->
+                            <!-- col will also work-->
+                            <div class="card border-info mb-3">
+                                <div class="card-header">
+                                    Operator Statistics - Graphical
+
+                                    <!-- Drop down button -->
+                                    <div class="btn-group float-right">
+                                        <button type="button" class="btn btn-light btn-sm dropdown-toggle"
+                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <!-- More -->
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <h6 class="dropdown-header">Select another chart</h6>
+                                            <a class="dropdown-item" id="bar" onclick="createChart('bar')">Bar Chart</a>
+                                            <a class="dropdown-item" id="line" onclick="createChart('line')">Line
+                                                Chart</a>
+                                            <a class="dropdown-item" id="pie" onclick="createChart('pie')">Pie Chart</a>
+                                        </div>
+                                    </div>
+                                    <!-- Drop down button -->
+
+                                </div>
+                                <div class="card-body"> <canvas id="parametersChart"></canvas> </div>
+                            </div>
+                            <!-- </div> -->
+
+                            <!-- <div class="col-sm-6"> -->
+                            <div class="card border-info mb-3">
+                                <div class="card-header"> Operator Statistics - Textual</div>
+                                <div class="card-body" id="stats-text"> </div>
+                            </div>
+                            <!-- </div> -->
+                        </div>
+                    </div>
+
+                </div>
+                <!-- End Row 2 -->
+
+                <!-- Row 3 -->
+                <!-- <div class="row mt-3">
+                    <div class="col-xl-4 col-md-6 mb-4">
+                        <div class="card border-left-success shadow h-10 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Earnings (Monthly)</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+                <!-- End Row 3 -->
+
+                <!-- Row 4 -->
+                <div class="row mt-3">
+                        <div class="col-md-12">
+                            <div class="card py-2 shadow-lg rounded text-right">
+                            <div class="card-header text-left">
+                                <h6 class="m-0 font-weight-normal text-primary">
+                                    Operator Statistics
+                                </h6>
+                            </div>
+                
+                            <div class="card-body">
+                                <div class="card-columns">
+                                    
+                                    <div class="card text-right shadow">
+                                        <div class="card-body">
+                                    
+                                            <h6 class="card-title text-xs font-weight-normal text-primary text-uppercase mb-1">
+                                                Number of Columns
+                                            </h6>
+                                            <p class="card-text h5 mb-0 font-weight-bold text-gray-800">
+                                                <label>
+                                                    <span>40000</span>
+                                                    <input type="checkbox" />
+                                                </label>
+                                            </p>
+                                    
+                                    
+                                            <!-- <p class="card-text">
+                                                <medium class="text-muted">
+                                                    <label>
+                                                        <input type="checkbox" />
+                                                        <span class='text-primary'>select</span>
+                                                    </label>
+                                                </medium>
+                                            </p> -->
+                                        </div>
+                                    </div>
+                
+                                    <div class="card text-right shadow">
+                                        <div class="card-body">
+                                    
+                                            <h6 class="card-title text-xs font-weight-normal text-primary text-uppercase mb-1">
+                                                Number of Columns
+                                            </h6>
+                                            <p class="card-text h5 mb-0 font-weight-bold text-gray-800">
+                                                <label>
+                                                    <span>40000</span>
+                                                    <input type="checkbox" />
+                                                </label>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="card text-right shadow">
+                                            <div class="card-body">
+                                        
+                                                <h6 class="card-title text-xs font-weight-normal text-primary text-uppercase mb-1">
+                                                    Number of Columns
+                                                </h6>
+                                                <p class="card-text h5 mb-0 font-weight-bold text-gray-800">
+                                                    <label>
+                                                        <span>40000</span>
+                                                        <input type="checkbox" />
+                                                    </label>
+                                                </p>
+                                            </div>
+                                        </div>
+                
+                                        <div class="card text-right shadow">
+                                                <div class="card-body">
+                                            
+                                                    <h6 class="card-title text-xs font-weight-normal text-primary text-uppercase mb-1">
+                                                        Number of Columns
+                                                    </h6>
+                                                    <p class="card-text h5 mb-0 font-weight-bold text-gray-800">
+                                                        <label>
+                                                            <span>40000</span>
+                                                            <input type="checkbox" />
+                                                        </label>
+                                                    </p>
+                                                </div>
+                                            </div>
+                        
+                
+                                </div>
+
+                                <a href="#" class="btn btn-primary">Generate Graph</a>
+
+                                <div class="checkbox checkbox-circle">
+                                        <input id="checkbox7" class="styled" type="checkbox">
+                                        <label for="checkbox7">
+                                            Simply Rounded
+                                        </label>
+                                    </div>
+                            </div>
+
+                            </div>
+                     </div>
+                
+                        <!-- <div class="col-md-12">
+                            <h2>Graph card</h2>
+                        </div> -->
+                    </div>
+                </div>
+                <!-- End Row 4 -->
+                
 
             </div>
-            <div class="card-body"> <canvas id="parametersChart"></canvas> </div>
-          </div>
-          <!-- </div> -->
 
-          <!-- <div class="col-sm-6"> -->
-          <div class="card border-info mb-3">
-            <div class="card-header"> Operator Statistics - Textual</div>
-            <div class="card-body" id="stats-text"> </div>
-          </div>
-          <!-- </div> -->
+            <!-- Footer -->
+            <!-- <footer class="sticky-footer bg-white">
+                    <div class="container my-auto">
+                        <div class="copyright text-center my-auto">
+                            <span> © tu-ilmenau | rcse | 2019</span>
+                        </div>
+                    </div>
+                </footer> -->
+            <!-- End of Footer -->
+
         </div>
-      </div>
+
+
+
+        <!-- <p class="mt-5 mb-3 text-muted text-center">© 2018-2019</p> -->
 
     </div>
 
-  </div>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
 
-  <p class="mt-5 mb-3 text-muted text-center">© 2018-2019</p>
+    <script>
 
-  <!-- Footer -->
-  <!-- https://getbootstrap.com/docs/4.0/components/navbar/ -->
-  <!-- <nav class="navbar navbar-dark fixed-bottom bg-dark flex-md-nowrap p-0 shadow">
-      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#"> Query Visualization </a>
-  </nav> -->
+        // Variables
+        var socket = new WebSocket("ws://localhost:4000/echo");
+        var parametersChart = null;
+        var chartLabels = [];
+        var chartData = [];
+        let newChart;
+        let chartType = 'bar';
+        var selected;
+
+        // Function Definitions
+        function fetchData() {
+
+            // Fetch json data
+            // Use https://d059d46c-898c-4ad8-bd3d-ec8d4c5c870d.mock.pstmn.io/dv (to get data from postman)
+            // Use 'http://localhost:4000/api' (to get data from local server)
+
+            fetch('/api') // '/api' or 'http://localhost:4000/api' will work
+                .then(function (response) {
+                    return response.json();
+                }).then(function (myJson) {
+
+                    var nodes = myJson.nodes;
+                    console.log("Nodes: ", nodes);
+                    var links = myJson.links;
+                    console.log("Links", links);
+
+                    createGraph(nodes, links)
+
+                });
+        };
+
+        function createGraph(nodes, links) {
+
+            // Hide stats when data is directly pushed from server using websocket
+            document.getElementById("stats-row").style.display = "none";
+
+            var width = window.innerWidth - 70
+            var height = window.innerHeight / 2
+
+            var svg = d3.select('#dag').append('svg')
+            svg.attr('width', width).attr('height', height)
+
+            // simulation setup with all forces
+            var linkForce = d3
+                .forceLink()
+                .id(function (link) { return link.id })
+            //.strength(function (link) { return link.strength })
+
+            var simulation = d3
+                .forceSimulation()
+                .force('link', linkForce)
+                .force('charge', d3.forceManyBody().strength(-4500))
+                .force('center', d3.forceCenter(width / 2, height / 2))
+
+            var dragDrop = d3.drag().on('start', function (node) {
+                node.fx = node.x
+                node.fy = node.y
+            }).on('drag', function (node) {
+                simulation.alphaTarget(0.7).restart()
+                node.fx = d3.event.x
+                node.fy = d3.event.y
+            }).on('end', function (node) {
+                if (!d3.event.active) {
+                    simulation.alphaTarget(0)
+                }
+                node.fx = null
+                node.fy = null
+            })
 
 
-  <script src="https://d3js.org/d3.v4.min.js"></script>
-  
-  <script>
+            function mouseover() {
+                d3.select(this)
+                    .transition()
+                    .duration(150)
+                    .attr("r", 16)
+                //.style("fill", "lightsteelblue");
+                console.log("Node is:", this)
+            }
 
-    // Variables
-    var socket = new WebSocket("ws://localhost:4000/echo");
-    var parametersChart = null;
-    var chartLabels = [];
-    var chartData = [];
-    let newChart;
-    let chartType = 'bar';
-    var selected;
+            function mouseout() {
+                d3.select(this)
+                    .transition()
+                    .duration(150)
+                    .attr("r", 11)
+            }
 
-    // Function Definitions
-    function fetchData() {
 
-      // Fetch json data
-      // Use https://d059d46c-898c-4ad8-bd3d-ec8d4c5c870d.mock.pstmn.io/dv (to get data from postman)
-      // Use 'http://localhost:4000/api' (to get data from local server)
+            var tooltip = d3.select("body")
+                .append("div")
+                .attr("class", "card")
+                .style("position", "absolute")
+                .style("z-index", "20")
+                .style("visibility", "hidden")
+                .text("No Information Available!");
 
-      fetch('/api') // '/api' or 'http://localhost:4000/api' will work
-        .then(function (response) {
-          return response.json();
-        }).then(function (myJson) {
+            svg = d3.select("svg")
+            svg.append("svg:defs").append("svg:marker")
+                .attr("id", "arrow")
+                .attr("viewBox", "0 -5 10 10")
+                .attr('refX', -50)//so that it comes towards the center.
+                .attr("markerWidth", 5)
+                .attr("markerHeight", 5)
+                .attr("orient", "auto")
+                .append("svg:path")
+                .attr("d", "M0,-5L10,0L0,5");
 
-          var nodes = myJson.nodes;
-          console.log("Nodes: ", nodes);
-          var links = myJson.links;
-          console.log("Links", links);
+            var linkElements = svg.selectAll("line.link")
+                .data(links)
+                .enter().append("path")//append path
+                .attr("class", "link")
+                .style("stroke", "#000")
+                .attr('marker-start', (d) => "url(#arrow)")//attach the arrow from defs
+                .style("stroke-width", 2);
 
-          createGraph(nodes, links)
+            var nodeElements = svg.append("g")
+                .attr("class", "nodes")
+                .selectAll("circle")
+                .data(nodes)
+                .enter().append("circle")
+                .attr("r", 11)
+                .attr("fill", getNodeColor)
+                .attr("stroke", "black")
+                .call(dragDrop)
+                .on('click', selectNode)
+                .on("mouseover", mouseover)
+                .on("mouseout", mouseout);
 
-        });
-    };
-
-    function createGraph(nodes, links) {
+            /* Display Tooltip
       
-      // Hide stats when data is directly pushed from server using websocket
-      document.getElementById("stats-row").style.display = "none";
-
-      var width = window.innerWidth
-      var height = window.innerHeight / 2
-
-      var svg = d3.select('#dag').append('svg')
-      svg.attr('width', width).attr('height', height)
-
-      // simulation setup with all forces
-      var linkForce = d3
-        .forceLink()
-        .id(function (link) { return link.id })
-      //.strength(function (link) { return link.strength })
-
-      var simulation = d3
-        .forceSimulation()
-        .force('link', linkForce)
-        .force('charge', d3.forceManyBody().strength(-4500))
-        .force('center', d3.forceCenter(width / 2, height / 2))
-
-      var dragDrop = d3.drag().on('start', function (node) {
-        node.fx = node.x
-        node.fy = node.y
-      }).on('drag', function (node) {
-        simulation.alphaTarget(0.7).restart()
-        node.fx = d3.event.x
-        node.fy = d3.event.y
-      }).on('end', function (node) {
-        if (!d3.event.active) {
-          simulation.alphaTarget(0)
-        }
-        node.fx = null
-        node.fy = null
-      })
-
-
-      function mouseover() {
-        d3.select(this)
-          .transition()
-          .duration(150)
-          .attr("r", 16)
-        //.style("fill", "lightsteelblue");
-        console.log("Node is:", this)
-      }
-
-      function mouseout() {
-        d3.select(this)
-          .transition()
-          .duration(150)
-          .attr("r", 11)
-      }
-
-
-      var tooltip = d3.select("body")
-        .append("div")
-        .attr("class", "card")
-        .style("position", "absolute")
-        .style("z-index", "20")
-        .style("visibility", "hidden")
-        .text("No Information Available!");
-
-      svg = d3.select("svg")
-      svg.append("svg:defs").append("svg:marker")
-        .attr("id", "arrow")
-        .attr("viewBox", "0 -5 10 10")
-        .attr('refX', -50)//so that it comes towards the center.
-        .attr("markerWidth", 5)
-        .attr("markerHeight", 5)
-        .attr("orient", "auto")
-        .append("svg:path")
-        .attr("d", "M0,-5L10,0L0,5");
-
-      var linkElements = svg.selectAll("line.link")
-        .data(links)
-        .enter().append("path")//append path
-        .attr("class", "link")
-        .style("stroke", "#000")
-        .attr('marker-start', (d) => "url(#arrow)")//attach the arrow from defs
-        .style("stroke-width", 2);
-
-      var nodeElements = svg.append("g")
-        .attr("class", "nodes")
-        .selectAll("circle")
-        .data(nodes)
-        .enter().append("circle")
-        .attr("r", 11)
-        .attr("fill", getNodeColor)
-        .attr("stroke", "black")
-        .call(dragDrop)
-        .on('click', selectNode)
-        .on("mouseover", mouseover)
-        .on("mouseout", mouseout);
-
-      /* Display Tooltip
-
-      .on("mouseover", function(node){
-        tooltip.text(JSON.stringify(node.parameters));
-        console.log("Mouse over:", node.parameters);
-        return tooltip.style("visibility", "visible");
-
-      })
-      .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
-      .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
+            .on("mouseover", function(node){
+              tooltip.text(JSON.stringify(node.parameters));
+              console.log("Mouse over:", node.parameters);
+              return tooltip.style("visibility", "visible");
       
-      */
+            })
+            .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
+            .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
+            
+            */
 
 
-      var textElements = svg.append("g")
-        .attr("class", "texts")
-        .selectAll("text")
-        .data(nodes)
-        .enter().append("text")
-        .text(function (node) { return node.label })
-        .attr("font-size", 15)
-        .attr("dx", 15)
-        .attr("dy", 4)
+            var textElements = svg.append("g")
+                .attr("class", "texts")
+                .selectAll("text")
+                .data(nodes)
+                .enter().append("text")
+                .text(function (node) { return node.label })
+                .attr("font-size", 15)
+                .attr("dx", 15)
+                .attr("dy", 4)
 
-      simulation.nodes(nodes).on('tick', () => {
-        nodeElements
-          .attr('cx', function (node) { return node.x })
-          .attr('cy', function (node) { return node.y })
-        textElements
-          .attr('x', function (node) { return node.x })
-          .attr('y', function (node) { return node.y })
-        linkElements
-          .attr("d", (d) => "M" + d.source.x + "," + d.source.y + ", " + d.target.x + "," + d.target.y)
-      })
+            simulation.nodes(nodes).on('tick', () => {
+                nodeElements
+                    .attr('cx', function (node) { return node.x })
+                    .attr('cy', function (node) { return node.y })
+                textElements
+                    .attr('x', function (node) { return node.x })
+                    .attr('y', function (node) { return node.y })
+                linkElements
+                    .attr("d", (d) => "M" + d.source.x + "," + d.source.y + ", " + d.target.x + "," + d.target.y)
+            })
 
-      simulation.force("link").links(links)
-    }
-
-    function getNodeColor(node) {
-      return node.level === 2 ? 'OrangeRed' : 'SpringGreen'
-    }
-
-    function selectNode(selectedNode) {
-      // Select unselect  node
-      // if (!selected) {
-      //   selected = this;
-      //   d3.select(selected).style('stroke', 'blue');
-      // }
-      // else if (selected == this) {
-      //   d3.select(selected).style('stroke', 'black');
-      //   selected = undefined;
-      // }
-
-      document.getElementById("stats-row").style.display = "block";
-
-      var thisNode = selectedNode
-      // On node selection we are making chartData empty
-      chartLabels = []
-      chartData = []
-
-      var parametersObj = selectedNode.parameters
-
-      Object.keys(parametersObj).forEach(function (key) {
-        // console.log(key + '=' + parametersObj[key]);
-        chartLabels.push(key)
-        chartData.push(parametersObj[key])
-      });
-
-      createChart(chartType)
-      showStatsText(parametersObj)
-    }
-
-    function createChart(type) {
-
-      let myChart = document.getElementById("parametersChart").getContext('2d')
-
-      if (newChart != null) {
-        newChart.destroy();
-      }
-
-      newChart = new Chart(myChart, {
-        type: type, //bar, pie, horizontalBar, line, doughnut, radar, polarArea
-        data: {
-          labels: chartLabels,
-          datasets: [{
-            label: '',
-            data: chartData,
-            //backgroundColor:'blue'
-            backgroundColor: ["rgb(255, 99, 132)", "rgb(54, 162, 235)", "rgb(255, 205, 86)"],
-            borderWidth: 2,
-            borderColor: ["rgb(255, 99, 132)", "rgb(54, 162, 235)", "rgb(255, 205, 86)"],
-            hoverBorderWidth: 2,
-            //hoverBorderColor: 'black',
-            lineTension: 0.1,
-            fill: false
-          }]
-        },
-        options: {
-          legend: {
-            display: false
-          }
+            simulation.force("link").links(links)
         }
-      });
 
-      chartType = type
-    }
+        function getNodeColor(node) {
+            return node.level === 2 ? 'OrangeRed' : 'SpringGreen'
+        }
 
-    function showStatsText(paramObj) {
-      let cardBody = document.getElementById("stats-text");
-      while (cardBody.firstChild) {
-        cardBody.removeChild(cardBody.firstChild);
-      }
+        function selectNode(selectedNode) {
+            // Select unselect  node
+            // if (!selected) {
+            //   selected = this;
+            //   d3.select(selected).style('stroke', 'blue');
+            // }
+            // else if (selected == this) {
+            //   d3.select(selected).style('stroke', 'black');
+            //   selected = undefined;
+            // }
 
-      Object.keys(paramObj).forEach(function (key) {
-        console.log(key + '=' + paramObj[key]);
+            document.getElementById("stats-row").style.display = "block";
 
-        let outerDiv = cardBody.appendChild(document.createElement('div'));
-        outerDiv.setAttribute("class", "card bg-light mb-3");
-        let innerDiv = outerDiv.appendChild(document.createElement('div'))
-        innerDiv.setAttribute("class", "card-body")
-        innerDiv.innerHTML = key + ' = ' + paramObj[key]
+            var thisNode = selectedNode
+            // On node selection we are making chartData empty
+            chartLabels = []
+            chartData = []
 
-        cardBody.appendChild(document.createElement('br'));
+            var parametersObj = selectedNode.parameters
 
-      });
+            // Object.keys(parametersObj).forEach(function (key) {
+            //     // console.log(key + '=' + parametersObj[key]);
+            //     chartLabels.push(key)
+            //     chartData.push(parametersObj[key])
+            // });
 
-    }
 
-    // Calling functions
-    fetchData();
+            const values = Object.values(parametersObj)
 
-    // Socket delegate methods
-    socket.onopen = function () {
-      socket.send("Connection created!!!");
-    };
+            values.forEach(function (arrayItem) {
+                var name = arrayItem.name;
+                var initialValue = arrayItem.initialValue;
+                chartLabels.push(name);
+                chartData.push(initialValue);
+                console.log(name);
+                console.log(initialValue);
+            });
 
-    socket.onmessage = function () {
-      d3.select("#dag").select("svg").remove();
-      fetchData();
-    };
+            createChart(chartType)
+            showStatsText(parametersObj)
+        }
+
+        function createChart(type) {
+
+            let myChart = document.getElementById("parametersChart").getContext('2d')
+
+            if (newChart != null) {
+                newChart.destroy();
+            }
+
+            newChart = new Chart(myChart, {
+                type: type, //bar, pie, horizontalBar, line, doughnut, radar, polarArea
+                data: {
+                    labels: chartLabels,
+                    datasets: [{
+                        label: '',
+                        data: chartData,
+                        //backgroundColor:'blue'
+                        backgroundColor: ["rgb(255, 99, 132)", "rgb(54, 162, 235)", "rgb(255, 205, 86)"],
+                        borderWidth: 2,
+                        borderColor: ["rgb(255, 99, 132)", "rgb(54, 162, 235)", "rgb(255, 205, 86)"],
+                        hoverBorderWidth: 2,
+                        //hoverBorderColor: 'black',
+                        lineTension: 0.1,
+                        fill: false
+                    }]
+                },
+                options: {
+                    legend: {
+                        display: false
+                    }
+                }
+            });
+
+            chartType = type
+        }
+
+        function showStatsText(paramObj) {
+            let cardBody = document.getElementById("stats-text");
+            while (cardBody.firstChild) {
+                cardBody.removeChild(cardBody.firstChild);
+            }
+
+            const values = Object.values(paramObj)
+
+            values.forEach(function (arrayItem) {
+                var name = arrayItem.name;
+                var initialValue = arrayItem.initialValue;
+
+                let outerDiv = cardBody.appendChild(document.createElement('div'));
+                outerDiv.setAttribute("class", "card bg-light mb-3");
+                let innerDiv = outerDiv.appendChild(document.createElement('div'))
+                innerDiv.setAttribute("class", "card-body")
+                innerDiv.innerHTML = name + ' = ' + initialValue
+
+                cardBody.appendChild(document.createElement('br'));
+
+            });
+
+            // Object.keys(paramObj).forEach(function (key) {
+            //     console.log(key + '=' + paramObj[key]);
+
+            //     let outerDiv = cardBody.appendChild(document.createElement('div'));
+            //     outerDiv.setAttribute("class", "card bg-light mb-3");
+            //     let innerDiv = outerDiv.appendChild(document.createElement('div'))
+            //     innerDiv.setAttribute("class", "card-body")
+            //     innerDiv.innerHTML = key + ' = ' + paramObj[key]
+
+            //     cardBody.appendChild(document.createElement('br'));
+
+            // });
+
+        }
+
+        // Calling functions
+        fetchData();
+
+        // Socket delegate methods
+        socket.onopen = function () {
+            socket.send("Connection created!!!");
+        };
+
+        socket.onmessage = function (e) {
+            d3.select("#dag").select("svg").remove();
+            fetchData();
+            console.log("Received data through socket:", e.data)
+        };
 
 
     //window.setTimeout(chart);
    // window.addEventListener("resize", fetchData);
-  </script>
+    </script>
 
 </body>
 

@@ -25,9 +25,10 @@ import (
 // }
 
 type Node struct {
-	ID    string `json:"id"`
-	Label string `json:"label"`
-	Level int    `json:"level"`
+	ID    string   `json:"id"`
+	Label string   `json:"label"`
+	Level int      `json:"level"`
+	Graph []string `json:"supportedGraphs"`
 	//Cities     []City                 `json:"data"`
 	Parameters map[string]interface{} `json:"parameters"`
 	//Info   OperatorData `json:"operatorData"`
@@ -60,7 +61,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
+	// router.PathPrefix("/").Handler(http.FileServer(http.Dir("./templates"))).Methods("GET")
 	router.HandleFunc("/", showQueryHandler).Methods("GET")
 	router.HandleFunc("/api", displayQueryJSONHandler)
 	router.HandleFunc("/api/json", processReceivedQueryJSONHandler)
@@ -214,6 +215,11 @@ func OperatorParametersHandler(w http.ResponseWriter, r *http.Request) {
 			for key, value := range v {
 				//fmt.Printf("KEY, VALUE! %s = %s\n", key, value)
 				node.Parameters[key] = value[0]
+
+				// paramValue := node.Parameters[key]
+				// tempVal := paramValue.(map[string]interface{})
+				// tempVal["initialValue"] = value[0]
+				// fmt.Printf("PARAM VALUE! %s = %s\n", paramValue, tempVal)
 			}
 			fmt.Printf("\nParamters Changed: %v\n", node.Parameters)
 			query.Nodes[i] = node
