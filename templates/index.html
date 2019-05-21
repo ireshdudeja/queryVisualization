@@ -27,7 +27,7 @@
             /* background-color: #fff; */
             background-color: rgba(0, 0, 0, 0);
         }
-    
+
         .card {
             position: relative;
             display: -webkit-box;
@@ -45,7 +45,7 @@
             border-radius: 0.35rem;
         }
 
-    
+
         .card-header {
             padding: .75rem 1.25rem;
             margin-bottom: 0;
@@ -54,14 +54,13 @@
         }
 
         .card-columns {
-                column-count: 4;
-            }
+            column-count: 4;
+        }
     </style>
 </head>
 
 <body class="pt-5">
     <!-- pt-5 to add space between below navigation bar -->
-
     <div class="wrapper">
 
         <!-- Navbar -->
@@ -71,7 +70,7 @@
         <!-- End Navbar -->
 
         <div class="content">
-                <!-- container-fluid -->
+            <!-- container-fluid -->
             <div class="container">
 
                 <!-- Row 1 -->
@@ -88,9 +87,9 @@
                             <div class="card-body">
                                 <div id="dag">
                                     <!-- <svg id="chart" width="960" height="500"
-                                    viewBox="0 0 960 500"
-                                    preserveAspectRatio="xMidYMid meet">
-                                  </svg> -->
+                                            viewBox="0 0 960 500"
+                                            preserveAspectRatio="xMidYMid meet">
+                                          </svg> -->
                                 </div>
                             </div>
                         </div>
@@ -144,151 +143,71 @@
                 <!-- End Row 2 -->
 
                 <!-- Row 3 -->
-                <!-- <div class="row mt-3">
-                    <div class="col-xl-4 col-md-6 mb-4">
-                        <div class="card border-left-success shadow h-10 py-2">
-                            <div class="card-body">
-                                <div class="row no-gutters align-items-center">
-                                    <div class="col mr-2">
-                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Earnings (Monthly)</div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
-                <!-- End Row 3 -->
-
-                <!-- Row 4 -->
                 <div class="row mt-3">
-                        <div class="col-md-12">
-                            <div class="card py-2 shadow-lg rounded text-right">
+                    <div class="col-md-12">
+                        <div class="card py-2 shadow-lg rounded text-right">
                             <div class="card-header text-left">
                                 <h6 class="m-0 font-weight-normal text-primary">
                                     Operator Statistics
                                 </h6>
                             </div>
-                
+
                             <div class="card-body">
-                                <div class="card-columns">
-                                    
-                                    <div class="card text-right shadow">
-                                        <div class="card-body">
-                                    
-                                            <h6 class="card-title text-xs font-weight-normal text-primary text-uppercase mb-1">
-                                                Number of Columns
-                                            </h6>
-                                            <p class="card-text h5 mb-0 font-weight-bold text-gray-800">
-                                                <label>
-                                                    <span>40000</span>
-                                                    <input type="checkbox" />
-                                                </label>
-                                            </p>
-                                    
-                                    
-                                            <!-- <p class="card-text">
-                                                <medium class="text-muted">
-                                                    <label>
-                                                        <input type="checkbox" />
-                                                        <span class='text-primary'>select</span>
-                                                    </label>
-                                                </medium>
-                                            </p> -->
-                                        </div>
-                                    </div>
-                
-                                    <div class="card text-right shadow">
-                                        <div class="card-body">
-                                    
-                                            <h6 class="card-title text-xs font-weight-normal text-primary text-uppercase mb-1">
-                                                Number of Columns
-                                            </h6>
-                                            <p class="card-text h5 mb-0 font-weight-bold text-gray-800">
-                                                <label>
-                                                    <span>40000</span>
-                                                    <input type="checkbox" />
-                                                </label>
-                                            </p>
-                                        </div>
-                                    </div>
+                                <div class="card-columns" id="param-cards"> </div>
 
-                                    <div class="card text-right shadow">
-                                            <div class="card-body">
-                                        
-                                                <h6 class="card-title text-xs font-weight-normal text-primary text-uppercase mb-1">
-                                                    Number of Columns
-                                                </h6>
-                                                <p class="card-text h5 mb-0 font-weight-bold text-gray-800">
-                                                    <label>
-                                                        <span>40000</span>
-                                                        <input type="checkbox" />
-                                                    </label>
-                                                </p>
-                                            </div>
-                                        </div>
-                
-                                        <div class="card text-right shadow">
-                                                <div class="card-body">
-                                            
-                                                    <h6 class="card-title text-xs font-weight-normal text-primary text-uppercase mb-1">
-                                                        Number of Columns
-                                                    </h6>
-                                                    <p class="card-text h5 mb-0 font-weight-bold text-gray-800">
-                                                        <label>
-                                                            <span>40000</span>
-                                                            <input type="checkbox" />
-                                                        </label>
-                                                    </p>
-                                                </div>
-                                            </div>
-                        
-                
-                                </div>
+                                <!-- <a href="#" class="btn btn-primary" onclick="getSelectedCards">Generate Chart</a> -->
 
-                                <a href="#" class="btn btn-primary">Generate Graph</a>
-
-                                <div class="checkbox checkbox-circle">
-                                        <input id="checkbox7" class="styled" type="checkbox">
-                                        <label for="checkbox7">
-                                            Simply Rounded
-                                        </label>
-                                    </div>
+                                <button type="button" class="btn btn-primary" onclick="getSelectedCards()">Generate Chart</button>
+                                
                             </div>
-
-                            </div>
-                     </div>
-                
-                        <!-- <div class="col-md-12">
-                            <h2>Graph card</h2>
-                        </div> -->
-                    </div>
-                </div>
-                <!-- End Row 4 -->
-                
-
-            </div>
-
-            <!-- Footer -->
-            <!-- <footer class="sticky-footer bg-white">
-                    <div class="container my-auto">
-                        <div class="copyright text-center my-auto">
-                            <span> © tu-ilmenau | rcse | 2019</span>
                         </div>
                     </div>
-                </footer> -->
-            <!-- End of Footer -->
+
+                    <!-- <div class="col-md-12">
+                                    <h2>Graph card</h2>
+                                </div> -->
+                </div>
+                <!-- End Row 3 -->
+
+                <!-- Row 4 -->
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <div class="card py-2 shadow-lg rounded text-right">
+                            <div class="card-header text-left">
+                                <h6 class="m-0 font-weight-normal text-primary">
+                                    Chart
+                                </h6>
+                            </div>
+
+                            <div class="card-body">
+                                <canvas id="chartjs-1"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- End Row 4 -->
+
 
         </div>
 
-
-
-        <!-- <p class="mt-5 mb-3 text-muted text-center">© 2018-2019</p> -->
+        <!-- Footer -->
+        <!-- <footer class="sticky-footer bg-white">
+                            <div class="container my-auto">
+                                <div class="copyright text-center my-auto">
+                                    <span> © tu-ilmenau | rcse | 2019</span>
+                                </div>
+                            </div>
+                        </footer> -->
+        <!-- End of Footer -->
 
     </div>
+
+
+
+    <!-- <p class="mt-5 mb-3 text-muted text-center">© 2018-2019</p> -->
+
 
     <script src="https://d3js.org/d3.v4.min.js"></script>
 
@@ -474,7 +393,7 @@
             //   selected = undefined;
             // }
 
-            document.getElementById("stats-row").style.display = "block";
+            document.getElementById("stats-row").style.display = "none"; // block | none
 
             var thisNode = selectedNode
             // On node selection we are making chartData empty
@@ -503,6 +422,7 @@
 
             createChart(chartType)
             showStatsText(parametersObj)
+            createParametersCards(parametersObj)
         }
 
         function createChart(type) {
@@ -577,6 +497,123 @@
 
         }
 
+        function createParametersCards(paramObj) {
+
+            let cardBody = document.getElementById("param-cards");
+            while (cardBody.firstChild) {
+                cardBody.removeChild(cardBody.firstChild);
+            }
+
+            const values = Object.values(paramObj)
+
+            values.forEach(function (arrayItem) {
+                var name = arrayItem.name;
+                var initialValue = arrayItem.initialValue;
+
+                let outerDiv = cardBody.appendChild(document.createElement('div'));
+                outerDiv.setAttribute("class", "card text-right shadow-sm bg-white rounded");
+
+                let innerDiv = outerDiv.appendChild(document.createElement('div'));
+                innerDiv.setAttribute("class", "card-body");
+
+                let h5 = innerDiv.appendChild(document.createElement('h5'));
+                h5.setAttribute("class", "card-title text-xs font-weight-normal text-primary text-uppercase mb-1");
+                h5.innerHTML = name;
+
+                let p = innerDiv.appendChild(document.createElement('p'));
+                p.setAttribute("class", "card-text h5 mb-0 font-weight-bold text-gray-800");
+
+                let input = p.appendChild(document.createElement('input'));
+                input.setAttribute("class", "checkbox-cards");
+                input.setAttribute("type", "checkbox");
+                input.setAttribute("id", name);
+                input.setAttribute("name", name);
+                input.setAttribute("value", initialValue);
+
+                let label = p.appendChild(document.createElement('label'));
+                label.setAttribute("for", name)
+                label.innerHTML = initialValue
+
+            });
+
+        }
+
+        var newBigChartArray = [];
+        var newBigChart= null;
+        
+        function getSelectedCards() {
+            newBigChartArray = []
+
+                var checkboxes = document.getElementsByClassName("checkbox-cards")
+                console.log("Selected Checkboxes:", checkboxes)
+                var numberOfCheckedItems = 0;
+                for (var i = 0; i < checkboxes.length; i++) {
+                    if (checkboxes[i].checked) {
+                        var tempObj = {};
+                        tempObj[checkboxes[i].name] = checkboxes[i].value;
+                        
+
+                        newBigChartArray.push(tempObj)
+                        console.log("New BigChart Object:", tempObj)
+                        numberOfCheckedItems++;
+                    }
+                }
+
+                if (numberOfCheckedItems == 0) {
+                    alert("Select atleast one checkbox!");
+                } else {
+                    console.log("New BigChart Array values:", newBigChartArray)
+                    createNewBigChart(newBigChartArray)
+                }
+
+            }
+
+        function createNewBigChart(newchartArray) {
+            var keyArray = []
+            var valueArray = []
+
+            newchartArray.forEach(function (item, index) {
+
+                Object.keys(item)
+                    .forEach(function eachKey(key) {
+                        keyArray.push(key)
+                        valueArray.push(item[key])
+                    });
+
+            });
+
+            if(newBigChart == null) {
+                newBigChart = new Chart(document.getElementById("chartjs-1"),
+                {
+                    "type": "bar",
+                    "data": {
+                        "labels": keyArray,
+                        "datasets": [{
+                            "label": "My First Dataset", 
+                            "data": valueArray,
+                            "fill": false,
+                            "backgroundColor": ["rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
+                            "borderColor": ["rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)", "rgb(75, 192, 192)", "rgb(54, 162, 235)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"],
+                            "borderWidth": 1
+                        }]
+                    },
+                    "options": {
+                        "scales": {
+                            "yAxes": [{ "ticks": { "beginAtZero": true } }]
+                        }
+                    }
+                });
+            }
+            else {
+                var data = newBigChart.config.data;
+                data.datasets[0].data = valueArray;
+                data.labels = keyArray;
+                newBigChart.update();
+            }
+            
+        }
+        
+        
         // Calling functions
         fetchData();
 
