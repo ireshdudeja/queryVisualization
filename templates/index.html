@@ -110,10 +110,10 @@
                                     Operator Statistics - Graphical
 
                                     <!-- Drop down button -->
-                                    <div class="btn-group float-right">
+                                    <!-- <div class="btn-group float-right">
                                         <button type="button" class="btn btn-light btn-sm dropdown-toggle"
                                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <!-- More -->
+                                            More
                                         </button>
                                         <div class="dropdown-menu">
                                             <h6 class="dropdown-header">Select another chart</h6>
@@ -122,8 +122,8 @@
                                                 Chart</a>
                                             <a class="dropdown-item" id="pie" onclick="createChart('pie')">Pie Chart</a>
                                         </div>
-                                    </div>
-                                    <!-- Drop down button -->
+                                    </div> -->
+                                    <!-- End Drop down button -->
 
                                 </div>
                                 <div class="card-body"> <canvas id="parametersChart"></canvas> </div>
@@ -143,7 +143,7 @@
                 <!-- End Row 2 -->
 
                 <!-- Row 3 -->
-                <div class="row mt-3">
+                <div class="row mt-3" id="param-cards-row" style="display:none;">
                     <div class="col-md-12">
                         <div class="card py-2 shadow-lg rounded text-right">
                             <div class="card-header text-left">
@@ -153,11 +153,9 @@
                             </div>
 
                             <div class="card-body">
-                                <div class="card-columns" id="param-cards"> </div>
+                                <div class="card-columns" id="param-cards-columns"> </div>
 
-                                <!-- <a href="#" class="btn btn-primary" onclick="getSelectedCards">Generate Chart</a> -->
-
-                                <button type="button" class="btn btn-primary" onclick="getSelectedCards()">Generate Chart</button>
+                                <button type="button" class="btn btn-primary" onclick="generateChart()">Generate Chart</button>
                                 
                             </div>
                         </div>
@@ -170,23 +168,35 @@
                 <!-- End Row 3 -->
 
                 <!-- Row 4 -->
-                <div class="row mt-3">
+                <div class="row mt-3" id="big-chart-row" style="display:none;">
                     <div class="col-md-12">
                         <div class="card py-2 shadow-lg rounded text-right">
-                            <div class="card-header text-left">
-                                <h6 class="m-0 font-weight-normal text-primary">
+                            <div class="card-header">
+                                <h6 class="m-0 font-weight-normal text-primary float-left">
                                     Chart
                                 </h6>
-                            </div>
 
+                                  <button type="button" id="more-charts-button" class="btn btn-primary btn-sm dropdown-toggle float-right"
+                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="display:none;">
+                                            More
+                                        </button>
+                                        <div class="dropdown-menu" id="more-charts-button-items">
+                                            <!-- <h6 class="dropdown-header">Select another chart</h6> -->
+                                            <!-- <a class="dropdown-item" id="bar" onclick="createChart('bar')">Bar Chart</a>
+                                            <a class="dropdown-item" id="line" onclick="createChart('line')">Line Chart</a>
+                                            <a class="dropdown-item" id="pie" onclick="createChart('pie')">Pie Chart</a> -->
+                                        </div>
+                
+                            </div>
+                
                             <div class="card-body">
                                 <canvas id="chartjs-1"></canvas>
                             </div>
                         </div>
                     </div>
-
+                
                 </div>
-            </div>
+                </div>
             <!-- End Row 4 -->
 
 
@@ -248,6 +258,7 @@
 
             // Hide stats when data is directly pushed from server using websocket
             document.getElementById("stats-row").style.display = "none";
+            
 
             var width = window.innerWidth - 70
             var height = window.innerHeight / 2
@@ -383,31 +394,21 @@
         }
 
         function selectNode(selectedNode) {
-            // Select unselect  node
-            // if (!selected) {
-            //   selected = this;
-            //   d3.select(selected).style('stroke', 'blue');
-            // }
-            // else if (selected == this) {
-            //   d3.select(selected).style('stroke', 'black');
-            //   selected = undefined;
-            // }
 
             document.getElementById("stats-row").style.display = "none"; // block | none
+            document.getElementById("param-cards-row").style.display = "block"; // block | none
+            document.getElementById("big-chart-row").style.display = "none"; // block | none
+           
 
             var thisNode = selectedNode
             // On node selection we are making chartData empty
             chartLabels = []
             chartData = []
 
-            var parametersObj = selectedNode.parameters
+            var parametersObj = selectedNode.parameters;
+            var allowedCharts = selectedNode.supportedCharts;
 
-            // Object.keys(parametersObj).forEach(function (key) {
-            //     // console.log(key + '=' + parametersObj[key]);
-            //     chartLabels.push(key)
-            //     chartData.push(parametersObj[key])
-            // });
-
+            console.log("selected Node:", selectedNode)
 
             const values = Object.values(parametersObj)
 
@@ -420,9 +421,12 @@
                 console.log(initialValue);
             });
 
-            createChart(chartType)
-            showStatsText(parametersObj)
-            createParametersCards(parametersObj)
+            createChart(chartType);
+            showStatsText(parametersObj);
+
+            createParametersCards(parametersObj);
+            displayMoreChartsButton(allowedCharts);
+
         }
 
         function createChart(type) {
@@ -499,7 +503,7 @@
 
         function createParametersCards(paramObj) {
 
-            let cardBody = document.getElementById("param-cards");
+            let cardBody = document.getElementById("param-cards-columns");
             while (cardBody.firstChild) {
                 cardBody.removeChild(cardBody.firstChild);
             }
@@ -538,20 +542,51 @@
 
         }
 
+        var currentChartType;
         var newBigChartArray = [];
         var newBigChart= null;
-        
-        function getSelectedCards() {
-            newBigChartArray = []
 
+        function displayMoreChartsButton(supportedCharts) {
+            console.log("Supported charts: ", supportedCharts);
+
+            if(supportedCharts.length != 0) {
+                document.getElementById("more-charts-button").style.display = "block";
+                addMenuOptions(supportedCharts);
+            } else {
+                document.getElementById("more-charts-button").style.display = "none";
+            }
+        }
+
+        function addMenuOptions(chartList) {
+
+                 currentChartType = chartList[0];
+
+                let menu = document.getElementById("more-charts-button-items");
+                while (menu.firstChild) {
+                    menu.removeChild(menu.firstChild);
+                }
+
+                chartList.forEach(function (chartType) {
+
+                    let anchorElement = menu.appendChild(document.createElement('a'));
+                    anchorElement.setAttribute("class", "dropdown-item");
+                    anchorElement.setAttribute("onclick", "drawSelectedChart('" + chartType + "')");
+                    anchorElement.innerHTML = chartType + " chart";
+                });
+            }
+                
+        // Called with Generate Chart button tapped
+        function generateChart() {
+
+                newBigChartArray = []
                 var checkboxes = document.getElementsByClassName("checkbox-cards")
                 console.log("Selected Checkboxes:", checkboxes)
+
                 var numberOfCheckedItems = 0;
                 for (var i = 0; i < checkboxes.length; i++) {
                     if (checkboxes[i].checked) {
                         var tempObj = {};
                         tempObj[checkboxes[i].name] = checkboxes[i].value;
-                        
 
                         newBigChartArray.push(tempObj)
                         console.log("New BigChart Object:", tempObj)
@@ -560,29 +595,62 @@
                 }
 
                 if (numberOfCheckedItems == 0) {
+                    document.getElementById("big-chart-row").style.display = "none"; // block | none
                     alert("Select atleast one checkbox!");
                 } else {
                     console.log("New BigChart Array values:", newBigChartArray)
-                    createNewBigChart(newBigChartArray)
+                    createNewBigChart(newBigChartArray, currentChartType)
+                    document.getElementById("big-chart-row").style.display = "block"; // block | none
                 }
 
             }
 
-        function createNewBigChart(newchartArray) {
-            var keyArray = []
-            var valueArray = []
+        function createNewBigChart(newchartArray, chartType) {
+                var keyArray = []
+                var valueArray = []
 
-            newchartArray.forEach(function (item, index) {
+                newchartArray.forEach(function (item, index) {
 
-                Object.keys(item)
-                    .forEach(function eachKey(key) {
-                        keyArray.push(key)
-                        valueArray.push(item[key])
-                    });
+                    Object.keys(item)
+                        .forEach(function eachKey(key) {
+                            keyArray.push(key)
+                            valueArray.push(item[key])
+                        });
 
-            });
+                });
 
-            if(newBigChart == null) {
+                switch (chartType) {
+                    case "bar":
+                        createBarChart(keyArray, valueArray);
+                        break;
+
+                    case "line":
+                        createLineChart(keyArray, valueArray);
+                        break;
+
+                    case "pie":
+                        createPieChart(keyArray, valueArray);
+                        break;
+
+                    default:
+                        console.log("Please create a some chart!");
+                }
+
+                // To display the user seelcted chart type n new card selection
+                currentChartType = chartType;
+            }
+
+        function drawSelectedChart(cType) {
+            createNewBigChart(newBigChartArray, cType);
+        }
+
+        function createBarChart(keyArray, valueArray) {
+            
+            if (newBigChart != null) {
+                newBigChart.destroy();
+            }
+            
+            // if(newBigChart == null) {
                 newBigChart = new Chart(document.getElementById("chartjs-1"),
                 {
                     "type": "bar",
@@ -599,19 +667,64 @@
                     },
                     "options": {
                         "scales": {
-                            "yAxes": [{ "ticks": { "beginAtZero": true } }]
+                            "yAxes": [{
+                                "ticks": { "beginAtZero": true }
+                            }]
                         }
                     }
                 });
-            }
-            else {
-                var data = newBigChart.config.data;
-                data.datasets[0].data = valueArray;
-                data.labels = keyArray;
-                newBigChart.update();
-            }
-            
+            // }
+            // else {
+            //     var data = newBigChart.config.data;
+            //     data.datasets[0].data = valueArray;
+            //     data.labels = keyArray;
+            //     newBigChart.update();
+            // }
         }
+
+        function createLineChart(keyArray, valueArray) {
+            if (newBigChart != null) {
+                newBigChart.destroy();
+            }
+              newBigChart = new Chart(document.getElementById("chartjs-1"),
+                    {
+                        "type": "line",
+                        "data": {
+                            "labels": keyArray,
+                            "datasets": [{
+                                "label": "My First Dataset",
+                                "data": valueArray,
+                                "fill": false,
+                                "borderColor": "rgb(75, 192, 192)",
+                                "lineTension": 0.1
+                            }]
+                        },
+                        "options": {
+                        "scales": {
+                            "yAxes": [{ "ticks": { "beginAtZero": true } }]
+                        }
+                    }
+                    });
+            }
+
+        function createPieChart(keyArray, valueArray) {
+                if (newBigChart != null) {
+                newBigChart.destroy();
+            }
+
+               newBigChart = new Chart(document.getElementById("chartjs-1"),
+                    {
+                        "type": "pie",
+                        "data": {
+                            "labels": keyArray,
+                            "datasets": [{
+                                "label": "My First Dataset",
+                                 "data": valueArray,
+                                "backgroundColor": ["rgb(255, 99, 132)", "rgb(54, 162, 235)", "rgb(255, 205, 86)"]
+                            }]
+                        }
+                    });
+            }
         
         
         // Calling functions

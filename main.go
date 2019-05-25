@@ -28,7 +28,7 @@ type Node struct {
 	ID    string   `json:"id"`
 	Label string   `json:"label"`
 	Level int      `json:"level"`
-	Graph []string `json:"supportedGraphs"`
+	Graph []string `json:"supportedCharts"`
 	//Cities     []City                 `json:"data"`
 	Parameters map[string]interface{} `json:"parameters"`
 	//Info   OperatorData `json:"operatorData"`
