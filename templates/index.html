@@ -97,52 +97,8 @@
                 </div>
                 <!-- End Row 1 -->
 
+
                 <!-- Row 2 -->
-                <div class="row mt-3" id="stats-row" style="display:none;">
-                    <!-- id="stats-row" style="display:none;" -->
-
-                    <div class="col">
-                        <div class="card-deck">
-                            <!-- <div class="col-sm-6"> -->
-                            <!-- col will also work-->
-                            <div class="card border-info mb-3">
-                                <div class="card-header">
-                                    Operator Statistics - Graphical
-
-                                    <!-- Drop down button -->
-                                    <!-- <div class="btn-group float-right">
-                                        <button type="button" class="btn btn-light btn-sm dropdown-toggle"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            More
-                                        </button>
-                                        <div class="dropdown-menu">
-                                            <h6 class="dropdown-header">Select another chart</h6>
-                                            <a class="dropdown-item" id="bar" onclick="createChart('bar')">Bar Chart</a>
-                                            <a class="dropdown-item" id="line" onclick="createChart('line')">Line
-                                                Chart</a>
-                                            <a class="dropdown-item" id="pie" onclick="createChart('pie')">Pie Chart</a>
-                                        </div>
-                                    </div> -->
-                                    <!-- End Drop down button -->
-
-                                </div>
-                                <div class="card-body"> <canvas id="parametersChart"></canvas> </div>
-                            </div>
-                            <!-- </div> -->
-
-                            <!-- <div class="col-sm-6"> -->
-                            <div class="card border-info mb-3">
-                                <div class="card-header"> Operator Statistics - Textual</div>
-                                <div class="card-body" id="stats-text"> </div>
-                            </div>
-                            <!-- </div> -->
-                        </div>
-                    </div>
-
-                </div>
-                <!-- End Row 2 -->
-
-                <!-- Row 3 -->
                 <div class="row mt-3" id="param-cards-row" style="display:none;">
                     <div class="col-md-12">
                         <div class="card py-2 shadow-lg rounded text-right">
@@ -165,9 +121,9 @@
                                     <h2>Graph card</h2>
                                 </div> -->
                 </div>
-                <!-- End Row 3 -->
+                <!-- End Row 2 -->
 
-                <!-- Row 4 -->
+                <!-- Row 3 -->
                 <div class="row mt-3" id="big-chart-row" style="display:none;">
                     <div class="col-md-12">
                         <div class="card py-2 shadow-lg rounded text-right">
@@ -181,10 +137,7 @@
                                             More
                                         </button>
                                         <div class="dropdown-menu" id="more-charts-button-items">
-                                            <!-- <h6 class="dropdown-header">Select another chart</h6> -->
-                                            <!-- <a class="dropdown-item" id="bar" onclick="createChart('bar')">Bar Chart</a>
-                                            <a class="dropdown-item" id="line" onclick="createChart('line')">Line Chart</a>
-                                            <a class="dropdown-item" id="pie" onclick="createChart('pie')">Pie Chart</a> -->
+                                            <!-- add menu items using js -->
                                         </div>
                 
                             </div>
@@ -197,7 +150,7 @@
                 
                 </div>
                 </div>
-            <!-- End Row 4 -->
+            <!-- End Row 3 -->
 
 
         </div>
@@ -257,7 +210,7 @@
         function createGraph(nodes, links) {
 
             // Hide stats when data is directly pushed from server using websocket
-            document.getElementById("stats-row").style.display = "none";
+           // document.getElementById("stats-row").style.display = "none";
             
 
             var width = window.innerWidth - 70
@@ -395,7 +348,7 @@
 
         function selectNode(selectedNode) {
 
-            document.getElementById("stats-row").style.display = "none"; // block | none
+            // document.getElementById("stats-row").style.display = "none"; // block | none
             document.getElementById("param-cards-row").style.display = "block"; // block | none
             document.getElementById("big-chart-row").style.display = "none"; // block | none
            
@@ -421,85 +374,15 @@
                 console.log(initialValue);
             });
 
-            createChart(chartType);
-            showStatsText(parametersObj);
+
 
             createParametersCards(parametersObj);
             displayMoreChartsButton(allowedCharts);
 
         }
 
-        function createChart(type) {
 
-            let myChart = document.getElementById("parametersChart").getContext('2d')
-
-            if (newChart != null) {
-                newChart.destroy();
-            }
-
-            newChart = new Chart(myChart, {
-                type: type, //bar, pie, horizontalBar, line, doughnut, radar, polarArea
-                data: {
-                    labels: chartLabels,
-                    datasets: [{
-                        label: '',
-                        data: chartData,
-                        //backgroundColor:'blue'
-                        backgroundColor: ["rgb(255, 99, 132)", "rgb(54, 162, 235)", "rgb(255, 205, 86)"],
-                        borderWidth: 2,
-                        borderColor: ["rgb(255, 99, 132)", "rgb(54, 162, 235)", "rgb(255, 205, 86)"],
-                        hoverBorderWidth: 2,
-                        //hoverBorderColor: 'black',
-                        lineTension: 0.1,
-                        fill: false
-                    }]
-                },
-                options: {
-                    legend: {
-                        display: false
-                    }
-                }
-            });
-
-            chartType = type
-        }
-
-        function showStatsText(paramObj) {
-            let cardBody = document.getElementById("stats-text");
-            while (cardBody.firstChild) {
-                cardBody.removeChild(cardBody.firstChild);
-            }
-
-            const values = Object.values(paramObj)
-
-            values.forEach(function (arrayItem) {
-                var name = arrayItem.name;
-                var initialValue = arrayItem.initialValue;
-
-                let outerDiv = cardBody.appendChild(document.createElement('div'));
-                outerDiv.setAttribute("class", "card bg-light mb-3");
-                let innerDiv = outerDiv.appendChild(document.createElement('div'))
-                innerDiv.setAttribute("class", "card-body")
-                innerDiv.innerHTML = name + ' = ' + initialValue
-
-                cardBody.appendChild(document.createElement('br'));
-
-            });
-
-            // Object.keys(paramObj).forEach(function (key) {
-            //     console.log(key + '=' + paramObj[key]);
-
-            //     let outerDiv = cardBody.appendChild(document.createElement('div'));
-            //     outerDiv.setAttribute("class", "card bg-light mb-3");
-            //     let innerDiv = outerDiv.appendChild(document.createElement('div'))
-            //     innerDiv.setAttribute("class", "card-body")
-            //     innerDiv.innerHTML = key + ' = ' + paramObj[key]
-
-            //     cardBody.appendChild(document.createElement('br'));
-
-            // });
-
-        }
+    
 
         function createParametersCards(paramObj) {
 
