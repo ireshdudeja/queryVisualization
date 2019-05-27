@@ -4,7 +4,7 @@
             "id": "1",
             "label": "generator",
             "level": 2,
-            "supportedCharts": ["bar", "line", "pie"],
+            "supportedGraphs": ["bar", "line", "pie"],
             "parameters": {
                 "max_key": {
                     "name": "Maximum Key",
@@ -27,7 +27,7 @@
             "id": "2",
             "label": "filter \u003e 10",
             "level": 1,
-            "supportedCharts": ["pie", "line", "bar"],
+            "supportedGraphs": ["bar", "line", "pie"],
             "parameters": {
                 "max_key": {
                     "name": "Maximum Key",
@@ -55,7 +55,7 @@
             "id": "3",
             "label": "digits",
             "level": 1,
-            "supportedCharts": ["line", "bar", "pie"],
+            "supportedGraphs": ["bar", "line", "pie"],
             "parameters": {
                 "max_key": {
                     "name": "Maximum Key",
@@ -78,7 +78,7 @@
             "id": "4",
             "label": "group result",
             "level": 1,
-            "supportedCharts": ["line"],
+            "supportedGraphs": ["bar", "line", "pie"],
             "parameters": {
                 "max_key": {
                     "name": "Maximum Key",
