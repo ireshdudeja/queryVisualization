@@ -84,13 +84,13 @@
                                 </h6>
                             </div>
 
-                            <div class="card-body">
-                                <div id="dag">
-                                    <!-- <svg id="chart" width="960" height="500"
+                            <div class="card-body" id="dag">
+                                <!-- <div id="dag">
+                                    <svg id="chart" width="960" height="500"
                                             viewBox="0 0 960 500"
                                             preserveAspectRatio="xMidYMid meet">
-                                          </svg> -->
-                                </div>
+                                          </svg>
+                                </div> -->
                             </div>
                         </div>
                     </div>
@@ -213,11 +213,15 @@
            // document.getElementById("stats-row").style.display = "none";
             
 
-            var width = window.innerWidth - 70
+            var width = window.innerWidth
             var height = window.innerHeight / 2
+            var cWidth = document.getElementById('dag').offsetWidth;
+
+            console.log("Width is: ", cWidth);
 
             var svg = d3.select('#dag').append('svg')
-            svg.attr('width', width).attr('height', height)
+            // svg.attr('width', '100%').attr('height', height)
+            svg.attr('viewBox', '0 0 '+ cWidth +' ' + height);
 
             // simulation setup with all forces
             var linkForce = d3
