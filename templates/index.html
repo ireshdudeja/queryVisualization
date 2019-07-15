@@ -84,13 +84,13 @@
                                 </h6>
                             </div>
 
-                            <div class="card-body">
-                                <div id="dag">
-                                    <!-- <svg id="chart" width="960" height="500"
+                            <div class="card-body" id="dag">
+                                <!-- <div id="dag">
+                                    <svg id="chart" width="960" height="500"
                                             viewBox="0 0 960 500"
                                             preserveAspectRatio="xMidYMid meet">
-                                          </svg> -->
-                                </div>
+                                          </svg>
+                                </div> -->
                             </div>
                         </div>
                     </div>
@@ -213,11 +213,15 @@
            // document.getElementById("stats-row").style.display = "none";
             
 
-            var width = window.innerWidth - 70
+            var width = window.innerWidth
             var height = window.innerHeight / 2
+            var cWidth = document.getElementById('dag').offsetWidth;
+
+            console.log("Width is: ", cWidth);
 
             var svg = d3.select('#dag').append('svg')
-            svg.attr('width', width).attr('height', height)
+            // svg.attr('width', '100%').attr('height', height)
+            svg.attr('viewBox', '0 0 '+ cWidth +' ' + height);
 
             // simulation setup with all forces
             var linkForce = d3
@@ -400,26 +404,32 @@
                 let outerDiv = cardBody.appendChild(document.createElement('div'));
                 outerDiv.setAttribute("class", "card text-right shadow-sm bg-white rounded");
 
-                let innerDiv = outerDiv.appendChild(document.createElement('div'));
-                innerDiv.setAttribute("class", "card-body");
+                let headerDiv = outerDiv.appendChild(document.createElement('div'));
+                headerDiv.setAttribute("class", "card-header");
 
-                let h5 = innerDiv.appendChild(document.createElement('h5'));
-                h5.setAttribute("class", "card-title text-xs font-weight-normal text-primary text-uppercase mb-1");
-                h5.innerHTML = name;
-
-                let p = innerDiv.appendChild(document.createElement('p'));
-                p.setAttribute("class", "card-text h5 mb-0 font-weight-bold text-gray-800");
-
-                let input = p.appendChild(document.createElement('input'));
-                input.setAttribute("class", "checkbox-cards");
+                let input = headerDiv.appendChild(document.createElement('input'));
+                input.setAttribute("class", "checkbox-cards form-check-input");
                 input.setAttribute("type", "checkbox");
                 input.setAttribute("id", name);
                 input.setAttribute("name", name);
                 input.setAttribute("value", initialValue);
 
-                let label = p.appendChild(document.createElement('label'));
-                label.setAttribute("for", name)
-                label.innerHTML = initialValue
+                let checkBoxLabel = headerDiv.appendChild(document.createElement('label'));
+                checkBoxLabel.setAttribute("class", "form-check-label text-primary text-uppercase");
+                checkBoxLabel.setAttribute("for", name);
+                checkBoxLabel.innerHTML = name;
+
+
+                let innerDiv = outerDiv.appendChild(document.createElement('div'));
+                innerDiv.setAttribute("class", "card-body");
+
+                // let h5 = innerDiv.appendChild(document.createElement('h5'));
+                // h5.setAttribute("class", "card-title text-xs font-weight-normal text-primary text-uppercase mb-1");
+               // h5.innerHTML = name;
+
+                let p = innerDiv.appendChild(document.createElement('p'));
+                p.setAttribute("class", "card-text h4 mb-0 font-weight-bold text-gray-800");
+                p.innerHTML = initialValue
 
             });
 
