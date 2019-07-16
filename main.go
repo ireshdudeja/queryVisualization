@@ -9,29 +9,24 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 )
 
-// type City struct {
-// 	Name          string `json:"name"`
-// 	StudentsCount string `json:"count"`
-// }
-
-// type OperatorData struct {
-// 	Attributes map[string]string `json:"attributes"`
-// 	Return     map[string]string `json:"return"`
-// }
-
 type Node struct {
-	ID    string   `json:"id"`
-	Label string   `json:"label"`
-	Level int      `json:"level"`
-	Graph []string `json:"supportedCharts"`
-	//Cities     []City                 `json:"data"`
-	Parameters map[string]interface{} `json:"parameters"`
-	//Info   OperatorData `json:"operatorData"`
+	ID         string               `json:"id"`
+	Label      string               `json:"label"`
+	Level      int                  `json:"level"`
+	Charts     []string             `json:"supportedCharts"`
+	Parameters map[string]Parameter `json:"parameters"`
+}
+
+type Parameter struct {
+	Function     string `json:"function"`
+	InitialValue string `json:"initialValue"`
+	Name         string `json:"name"`
 }
 
 type Link struct {
@@ -212,14 +207,40 @@ func OperatorParametersHandler(w http.ResponseWriter, r *http.Request) {
 
 			fmt.Printf("  ID exists\n")
 			idExists = true
+
+			fmt.Printf("Value Array = %s\n", v)
+
 			for key, value := range v {
 				//fmt.Printf("KEY, VALUE! %s = %s\n", key, value)
-				node.Parameters[key] = value[0]
+				t := node.Parameters[key]
 
-				// paramValue := node.Parameters[key]
-				// tempVal := paramValue.(map[string]interface{})
-				// tempVal["initialValue"] = value[0]
-				// fmt.Printf("PARAM VALUE! %s = %s\n", paramValue, tempVal)
+				lastValue := StringToFloat(t.InitialValue)
+				newValue := StringToFloat(value[0])
+
+				fmt.Printf("Old Value: %.2f , New Value: %.2f\n", lastValue, newValue)
+
+				switch t.Function {
+				case "maximum":
+					if lastValue > newValue {
+						t.InitialValue = fmt.Sprintf("%.2f", lastValue)
+					} else {
+						t.InitialValue = fmt.Sprintf("%.2f", newValue)
+					}
+				case "minimum":
+					if lastValue < newValue {
+						t.InitialValue = fmt.Sprintf("%.2f", lastValue)
+					} else {
+						t.InitialValue = fmt.Sprintf("%.2f", newValue)
+					}
+				case "increment":
+					t.InitialValue = fmt.Sprintf("%.2f", lastValue+1.0) // increment 1 in lastValue
+				case "decrement":
+					t.InitialValue = fmt.Sprintf("%.2f", lastValue-1.0)
+				default:
+					t.InitialValue = fmt.Sprintf("%.2f", newValue) // decrement 1 in lastValue
+				}
+
+				node.Parameters[key] = t
 			}
 			fmt.Printf("\nParamters Changed: %v\n", node.Parameters)
 			query.Nodes[i] = node
@@ -227,7 +248,7 @@ func OperatorParametersHandler(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	fmt.Printf("\n ******** NODES: ******* \n %v", query.Nodes)
+	// fmt.Printf("\n ******** NODES: ******* \n %v", query.Nodes)
 
 	if idExists == false {
 		fmt.Printf("\nOperator id doesn't exist and Paramters can't be Changed!\n")
@@ -238,7 +259,7 @@ func OperatorParametersHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		err = ioutil.WriteFile("output.json", b, 0644)
-		log.Print("Updated Paramters written")
+		log.Print("\n Updated Paramters written")
 		go writer(&query)
 	}
 
@@ -305,5 +326,15 @@ func echo() {
 				delete(clients, client)
 			}
 		}
+	}
+}
+
+func StringToFloat(input_string string) float64 {
+
+	if s, err := strconv.ParseFloat(input_string, 64); err == nil {
+		fmt.Println(s)
+		return s
+	} else {
+		return 0.0
 	}
 }

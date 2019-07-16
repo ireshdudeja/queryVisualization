@@ -4,22 +4,26 @@
             "id": "1",
             "label": "generator",
             "level": 2,
-            "supportedCharts": ["bar", "line", "pie"],
+            "supportedCharts": [
+                "bar",
+                "line",
+                "pie"
+            ],
             "parameters": {
                 "max_key": {
-                    "name": "Maximum Key",
-                    "initialValue": "18",
-                    "function": "maximum"
+                    "function": "maximum",
+                    "initialValue": "33",
+                    "name": "Maximum Key"
                 },
                 "min_key": {
-                    "name": "Minimum Key",
-                    "initialValue": "19",
-                    "function": "minimum"
+                    "function": "minimum",
+                    "initialValue": "16",
+                    "name": "Minimum Key"
                 },
                 "num_tuples": {
-                    "name": "Number of Tuples",
-                    "initialValue": "69",
-                    "function": ""
+                    "function": "",
+                    "initialValue": "67",
+                    "name": "Number of Tuples"
                 }
             }
         },
@@ -27,27 +31,31 @@
             "id": "2",
             "label": "filter \u003e 10",
             "level": 1,
-            "supportedCharts": ["pie", "line", "bar"],
+            "supportedCharts": [
+                "pie",
+                "line",
+                "bar"
+            ],
             "parameters": {
                 "max_key": {
-                    "name": "Maximum Key",
-                    "initialValue": "23",
-                    "function": "maximum"
+                    "function": "maximum",
+                    "initialValue": "37.00",
+                    "name": "Maximum Key"
                 },
                 "min_key": {
-                    "name": "Minimum Key",
-                    "initialValue": "10",
-                    "function": "minimum"
+                    "function": "minimum",
+                    "initialValue": "10.00",
+                    "name": "Minimum Key"
                 },
                 "num_tuples": {
-                    "name": "Number of Tuples",
-                    "initialValue": "40",
-                    "function": ""
+                    "function": "",
+                    "initialValue": "66.00",
+                    "name": "Number of Tuples"
                 },
                 "positive": {
-                    "name": "Positive",
-                    "initialValue": "40",
-                    "function": "increment"
+                    "function": "increment",
+                    "initialValue": "45.00",
+                    "name": "Positive"
                 }
             }
         },
@@ -55,22 +63,26 @@
             "id": "3",
             "label": "digits",
             "level": 1,
-            "supportedCharts": ["line", "bar", "pie"],
+            "supportedCharts": [
+                "line",
+                "bar",
+                "pie"
+            ],
             "parameters": {
                 "max_key": {
-                    "name": "Maximum Key",
-                    "initialValue": "34",
-                    "function": "maximum"
+                    "function": "maximum",
+                    "initialValue": "37.00",
+                    "name": "Maximum Key"
                 },
                 "min_key": {
-                    "name": "Minimum Key",
-                    "initialValue": "100",
-                    "function": "minimum"
+                    "function": "minimum",
+                    "initialValue": "15.00",
+                    "name": "Minimum Key"
                 },
                 "num_tuples": {
-                    "name": "Number of Tuples",
-                    "initialValue": "40",
-                    "function": ""
+                    "function": "",
+                    "initialValue": "66.00",
+                    "name": "Number of Tuples"
                 }
             }
         },
@@ -78,22 +90,24 @@
             "id": "4",
             "label": "group result",
             "level": 1,
-            "supportedCharts": ["line"],
+            "supportedCharts": [
+                "line"
+            ],
             "parameters": {
                 "max_key": {
-                    "name": "Maximum Key",
+                    "function": "maximum",
                     "initialValue": "14",
-                    "function": "maximum"
+                    "name": "Maximum Key"
                 },
                 "min_key": {
-                    "name": "Minimum Key",
+                    "function": "minimum",
                     "initialValue": "120",
-                    "function": "minimum"
+                    "name": "Minimum Key"
                 },
                 "num_tuples": {
-                    "name": "Number of Tuples",
+                    "function": "",
                     "initialValue": "25",
-                    "function": ""
+                    "name": "Number of Tuples"
                 }
             }
         }
@@ -109,7 +123,4 @@
         },
         {
             "target": "4",
-            "source": "3"
-        }
-    ]
-}
+            "source": "3"}]}
