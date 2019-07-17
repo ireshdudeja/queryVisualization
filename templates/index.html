@@ -11,6 +11,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <style>
         body {
             margin: 0;
@@ -54,7 +56,7 @@
         }
 
         .card-columns {
-            column-count: 4;
+            column-count: 2;
         }
     </style>
 </head>
@@ -111,8 +113,9 @@
                             <div class="card-body">
                                 <div class="card-columns" id="param-cards-columns"> </div>
 
-                                <button type="button" class="btn btn-primary" onclick="generateChart()">Generate Chart</button>
-                                
+                                <button type="button" class="btn btn-primary" onclick="generateChart()">Generate
+                                    Chart</button>
+
                             </div>
                         </div>
                     </div>
@@ -132,24 +135,25 @@
                                     Chart
                                 </h6>
 
-                                  <button type="button" id="more-charts-button" class="btn btn-primary btn-sm dropdown-toggle float-right"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="display:none;">
-                                            More
-                                        </button>
-                                        <div class="dropdown-menu" id="more-charts-button-items">
-                                            <!-- add menu items using js -->
-                                        </div>
-                
+                                <button type="button" id="more-charts-button"
+                                    class="btn btn-primary btn-sm dropdown-toggle float-right" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false" style="display:none;">
+                                    More
+                                </button>
+                                <div class="dropdown-menu" id="more-charts-button-items">
+                                    <!-- add menu items using js -->
+                                </div>
+
                             </div>
-                
+
                             <div class="card-body">
                                 <canvas id="chartjs-1"></canvas>
                             </div>
                         </div>
                     </div>
-                
+
                 </div>
-                </div>
+            </div>
             <!-- End Row 3 -->
 
 
@@ -183,7 +187,9 @@
         var chartData = [];
         let newChart;
         let chartType = 'bar';
-        var selected;
+        var currentlySelectedNode;
+
+        const api_url = '/api'; // '/api' or 'http://localhost:4000/api' will work
 
         // Function Definitions
         function fetchData() {
@@ -192,7 +198,7 @@
             // Use https://d059d46c-898c-4ad8-bd3d-ec8d4c5c870d.mock.pstmn.io/dv (to get data from postman)
             // Use 'http://localhost:4000/api' (to get data from local server)
 
-            fetch('/api') // '/api' or 'http://localhost:4000/api' will work
+            fetch(api_url) 
                 .then(function (response) {
                     return response.json();
                 }).then(function (myJson) {
@@ -210,8 +216,8 @@
         function createGraph(nodes, links) {
 
             // Hide stats when data is directly pushed from server using websocket
-           // document.getElementById("stats-row").style.display = "none";
-            
+            // document.getElementById("stats-row").style.display = "none";
+
 
             var width = window.innerWidth
             var height = window.innerHeight / 2
@@ -221,7 +227,7 @@
 
             var svg = d3.select('#dag').append('svg')
             // svg.attr('width', '100%').attr('height', height)
-            svg.attr('viewBox', '0 0 '+ cWidth +' ' + height);
+            svg.attr('viewBox', '0 0 ' + cWidth + ' ' + height);
 
             // simulation setup with all forces
             var linkForce = d3
@@ -355,9 +361,9 @@
             // document.getElementById("stats-row").style.display = "none"; // block | none
             document.getElementById("param-cards-row").style.display = "block"; // block | none
             document.getElementById("big-chart-row").style.display = "none"; // block | none
-           
 
-            var thisNode = selectedNode
+
+            currentlySelectedNode = selectedNode
             // On node selection we are making chartData empty
             chartLabels = []
             chartData = []
@@ -386,8 +392,6 @@
         }
 
 
-    
-
         function createParametersCards(paramObj) {
 
             let cardBody = document.getElementById("param-cards-columns");
@@ -395,11 +399,57 @@
                 cardBody.removeChild(cardBody.firstChild);
             }
 
-            const values = Object.values(paramObj)
+            // const values = Object.values(paramObj)
 
-            values.forEach(function (arrayItem) {
-                var name = arrayItem.name;
-                var initialValue = arrayItem.initialValue;
+            // values.forEach(function (arrayItem) {
+            //     var name = arrayItem.name;
+            //     var initialValue = arrayItem.initialValue;
+
+            //     let outerDiv = cardBody.appendChild(document.createElement('div'));
+            //     outerDiv.setAttribute("class", "card text-right shadow-sm bg-white rounded");
+
+            //     let headerDiv = outerDiv.appendChild(document.createElement('div'));
+            //     headerDiv.setAttribute("class", "card-header");
+
+            //     let input = headerDiv.appendChild(document.createElement('input'));
+            //     input.setAttribute("class", "checkbox-cards form-check-input");
+            //     input.setAttribute("type", "checkbox");
+            //     input.setAttribute("id", name);
+            //     input.setAttribute("name", name);
+            //     input.setAttribute("value", initialValue);
+
+            //     let checkBoxLabel = headerDiv.appendChild(document.createElement('label'));
+            //     checkBoxLabel.setAttribute("class", "form-check-label text-primary text-uppercase");
+            //     checkBoxLabel.setAttribute("for", name);
+            //     checkBoxLabel.innerHTML = name;
+
+
+            //     let innerDiv = outerDiv.appendChild(document.createElement('div'));
+            //     innerDiv.setAttribute("class", "card-body");
+
+            //     // let h5 = innerDiv.appendChild(document.createElement('h5'));
+            //     // h5.setAttribute("class", "card-title text-xs font-weight-normal text-primary text-uppercase mb-1");
+            //    // h5.innerHTML = name;
+
+            //     let p = innerDiv.appendChild(document.createElement('p'));
+            //     p.setAttribute("class", "card-text h4 mb-0 font-weight-bold text-gray-800");
+            //     p.innerHTML = initialValue
+
+
+            //     let chartDiv = innerDiv.appendChild(document.createElement('div'));
+            //     let chartCanvas = chartDiv.appendChild(document.createElement('canvas'));
+            //     chartCanvas.setAttribute("id", "cardLineChart");
+
+            //     new Chart(document.getElementById("cardLineChart"),{"type":"line","data":{"labels":["January","February","March","April","May","June","July"],"datasets":[{"label":"My First Dataset","data":[65,59,80,81,56,55,40],"fill":false,"borderColor":"rgb(75, 192, 192)","lineTension":0.1}]},"options":{}});
+
+            // });
+
+
+            Object.keys(paramObj).forEach(function (key) {
+
+                console.log(key, paramObj[key].name);
+                var name = paramObj[key].name;
+                var initialValue = paramObj[key].initialValue;
 
                 let outerDiv = cardBody.appendChild(document.createElement('div'));
                 outerDiv.setAttribute("class", "card text-right shadow-sm bg-white rounded");
@@ -425,11 +475,37 @@
 
                 // let h5 = innerDiv.appendChild(document.createElement('h5'));
                 // h5.setAttribute("class", "card-title text-xs font-weight-normal text-primary text-uppercase mb-1");
-               // h5.innerHTML = name;
+                // h5.innerHTML = name;
 
                 let p = innerDiv.appendChild(document.createElement('p'));
-                p.setAttribute("class", "card-text h4 mb-0 font-weight-bold text-gray-800");
-                p.innerHTML = initialValue
+                p.setAttribute("class", "card-text h1 mb-0 font-weight-bold text-gray-800");
+                p.setAttribute("id", key + "_"); // Assigning unique id to p element
+                p.innerHTML = initialValue;
+
+
+                // let chartDiv = innerDiv.appendChild(document.createElement('div'));
+                // chartDiv.setAttribute("id", key);
+                
+                // function getData() {
+                //     return Math.random();
+                // }
+                // Plotly.plot(key, [{
+                //     y: [getData()],
+                //     type: 'line'
+                // }]);
+
+                // var cnt = 0;
+                // setInterval(function () {
+                //     Plotly.extendTraces(key, { y: [[getData()]] }, [0]);
+                //     cnt++;
+                //     if (cnt > 30) {
+                //         Plotly.relayout(key, {
+                //             xaxis: {
+                //                 range: [cnt - 30, cnt]
+                //             }
+                //         });
+                //     }
+                // }, 500);
 
             });
 
@@ -437,12 +513,12 @@
 
         var currentChartType;
         var newBigChartArray = [];
-        var newBigChart= null;
+        var newBigChart = null;
 
         function displayMoreChartsButton(supportedCharts) {
             console.log("Supported charts: ", supportedCharts);
 
-            if(supportedCharts.length != 0) {
+            if (supportedCharts.length != 0) {
                 document.getElementById("more-charts-button").style.display = "block";
                 addMenuOptions(supportedCharts);
             } else {
@@ -452,105 +528,105 @@
 
         function addMenuOptions(chartList) {
 
-                 currentChartType = chartList[0];
+            currentChartType = chartList[0];
 
-                let menu = document.getElementById("more-charts-button-items");
-                while (menu.firstChild) {
-                    menu.removeChild(menu.firstChild);
-                }
-
-                chartList.forEach(function (chartType) {
-
-                    let anchorElement = menu.appendChild(document.createElement('a'));
-                    anchorElement.setAttribute("class", "dropdown-item");
-                    anchorElement.setAttribute("onclick", "drawSelectedChart('" + chartType + "')");
-                    anchorElement.innerHTML = chartType + " chart";
-                });
+            let menu = document.getElementById("more-charts-button-items");
+            while (menu.firstChild) {
+                menu.removeChild(menu.firstChild);
             }
-                
+
+            chartList.forEach(function (chartType) {
+
+                let anchorElement = menu.appendChild(document.createElement('a'));
+                anchorElement.setAttribute("class", "dropdown-item");
+                anchorElement.setAttribute("onclick", "drawSelectedChart('" + chartType + "')");
+                anchorElement.innerHTML = chartType + " chart";
+            });
+        }
+
         // Called with Generate Chart button tapped
         function generateChart() {
 
-                newBigChartArray = []
-                var checkboxes = document.getElementsByClassName("checkbox-cards")
-                console.log("Selected Checkboxes:", checkboxes)
+            newBigChartArray = []
+            var checkboxes = document.getElementsByClassName("checkbox-cards")
+            console.log("Selected Checkboxes:", checkboxes)
 
-                var numberOfCheckedItems = 0;
-                for (var i = 0; i < checkboxes.length; i++) {
-                    if (checkboxes[i].checked) {
-                        var tempObj = {};
-                        tempObj[checkboxes[i].name] = checkboxes[i].value;
+            var numberOfCheckedItems = 0;
+            for (var i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].checked) {
+                    var tempObj = {};
+                    tempObj[checkboxes[i].name] = checkboxes[i].value;
 
-                        newBigChartArray.push(tempObj)
-                        console.log("New BigChart Object:", tempObj)
-                        numberOfCheckedItems++;
-                    }
+                    newBigChartArray.push(tempObj)
+                    console.log("New BigChart Object:", tempObj)
+                    numberOfCheckedItems++;
                 }
-
-                if (numberOfCheckedItems == 0) {
-                    document.getElementById("big-chart-row").style.display = "none"; // block | none
-                    alert("Select atleast one checkbox!");
-                } else {
-                    console.log("New BigChart Array values:", newBigChartArray)
-                    createNewBigChart(newBigChartArray, currentChartType)
-                    document.getElementById("big-chart-row").style.display = "block"; // block | none
-                }
-
             }
+
+            if (numberOfCheckedItems == 0) {
+                document.getElementById("big-chart-row").style.display = "none"; // block | none
+                alert("Select atleast one checkbox!");
+            } else {
+                console.log("New BigChart Array values:", newBigChartArray)
+                createNewBigChart(newBigChartArray, currentChartType)
+                document.getElementById("big-chart-row").style.display = "block"; // block | none
+            }
+
+        }
 
         function createNewBigChart(newchartArray, chartType) {
-                var keyArray = []
-                var valueArray = []
+            var keyArray = []
+            var valueArray = []
 
-                newchartArray.forEach(function (item, index) {
+            newchartArray.forEach(function (item, index) {
 
-                    Object.keys(item)
-                        .forEach(function eachKey(key) {
-                            keyArray.push(key)
-                            valueArray.push(item[key])
-                        });
+                Object.keys(item)
+                    .forEach(function eachKey(key) {
+                        keyArray.push(key)
+                        valueArray.push(item[key])
+                    });
 
-                });
+            });
 
-                switch (chartType) {
-                    case "bar":
-                        createBarChart(keyArray, valueArray);
-                        break;
+            switch (chartType) {
+                case "bar":
+                    createBarChart(keyArray, valueArray);
+                    break;
 
-                    case "line":
-                        createLineChart(keyArray, valueArray);
-                        break;
+                case "line":
+                    createLineChart(keyArray, valueArray);
+                    break;
 
-                    case "pie":
-                        createPieChart(keyArray, valueArray);
-                        break;
+                case "pie":
+                    createPieChart(keyArray, valueArray);
+                    break;
 
-                    default:
-                        console.log("Please create a some chart!");
-                }
-
-                // To display the user seelcted chart type n new card selection
-                currentChartType = chartType;
+                default:
+                    console.log("Please create a some chart!");
             }
+
+            // To display the user seelcted chart type n new card selection
+            currentChartType = chartType;
+        }
 
         function drawSelectedChart(cType) {
             createNewBigChart(newBigChartArray, cType);
         }
 
         function createBarChart(keyArray, valueArray) {
-            
+
             if (newBigChart != null) {
                 newBigChart.destroy();
             }
-            
+
             // if(newBigChart == null) {
-                newBigChart = new Chart(document.getElementById("chartjs-1"),
+            newBigChart = new Chart(document.getElementById("chartjs-1"),
                 {
                     "type": "bar",
                     "data": {
                         "labels": keyArray,
                         "datasets": [{
-                            "label": "My First Dataset", 
+                            "label": "My First Dataset",
                             "data": valueArray,
                             "fill": false,
                             "backgroundColor": ["rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
@@ -579,47 +655,47 @@
             if (newBigChart != null) {
                 newBigChart.destroy();
             }
-              newBigChart = new Chart(document.getElementById("chartjs-1"),
-                    {
-                        "type": "line",
-                        "data": {
-                            "labels": keyArray,
-                            "datasets": [{
-                                "label": "My First Dataset",
-                                "data": valueArray,
-                                "fill": false,
-                                "borderColor": "rgb(75, 192, 192)",
-                                "lineTension": 0.1
-                            }]
-                        },
-                        "options": {
+            newBigChart = new Chart(document.getElementById("chartjs-1"),
+                {
+                    "type": "line",
+                    "data": {
+                        "labels": keyArray,
+                        "datasets": [{
+                            "label": "My First Dataset",
+                            "data": valueArray,
+                            "fill": false,
+                            "borderColor": "rgb(75, 192, 192)",
+                            "lineTension": 0.1
+                        }]
+                    },
+                    "options": {
                         "scales": {
                             "yAxes": [{ "ticks": { "beginAtZero": true } }]
                         }
                     }
-                    });
-            }
+                });
+        }
 
         function createPieChart(keyArray, valueArray) {
-                if (newBigChart != null) {
+            if (newBigChart != null) {
                 newBigChart.destroy();
             }
 
-               newBigChart = new Chart(document.getElementById("chartjs-1"),
-                    {
-                        "type": "pie",
-                        "data": {
-                            "labels": keyArray,
-                            "datasets": [{
-                                "label": "My First Dataset",
-                                 "data": valueArray,
-                                "backgroundColor": ["rgb(255, 99, 132)", "rgb(54, 162, 235)", "rgb(255, 205, 86)"]
-                            }]
-                        }
-                    });
-            }
-        
-        
+            newBigChart = new Chart(document.getElementById("chartjs-1"),
+                {
+                    "type": "pie",
+                    "data": {
+                        "labels": keyArray,
+                        "datasets": [{
+                            "label": "My First Dataset",
+                            "data": valueArray,
+                            "backgroundColor": ["rgb(255, 99, 132)", "rgb(54, 162, 235)", "rgb(255, 205, 86)"]
+                        }]
+                    }
+                });
+        }
+
+
         // Calling functions
         fetchData();
 
@@ -629,10 +705,42 @@
         };
 
         socket.onmessage = function (e) {
-            d3.select("#dag").select("svg").remove();
-            fetchData();
+            //d3.select("#dag").select("svg").remove();
+            // fetchData();
+            reloadCards();
             console.log("Received data through socket:", e.data)
         };
+
+            async function reloadCards() {
+
+                const response = await fetch(api_url);
+                const data = await response.json();
+                const { nodes, links } = data;
+                console.log("\nNodes:", nodes);
+
+                nodes.forEach(function (node) {
+                    if (currentlySelectedNode != null) {
+                        if (node.id == currentlySelectedNode.id) {
+                            console.log("Selected Node is", node.id)
+
+                            Object.keys(node.parameters).forEach(function (key) {
+                                    console.log("Parameter Key is:", key);
+                                    var p = document.getElementById(key + '_');
+                                    p.innerHTML = node.parameters[key].initialValue;
+                            });
+
+                        }
+                    }
+                    else {
+                        // Here we can reload whole page
+                        console.log("No node is selected");
+                    }
+
+                    d3.select("#dag").select("svg").remove();
+                    createGraph(nodes, links);
+                });
+
+            }
 
 
     //window.setTimeout(chart);
