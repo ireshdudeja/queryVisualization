@@ -57,11 +57,14 @@ func main() {
 		log.Fatal(err)
 	}
 	// router.PathPrefix("/").Handler(http.FileServer(http.Dir("./templates"))).Methods("GET")
-	router.HandleFunc("/", showQueryHandler).Methods("GET")
+	readJSONFile()
+
+	//router.HandleFunc("/", showQueryHandler).Methods("GET")
 	router.HandleFunc("/api", displayQueryJSONHandler)
 	router.HandleFunc("/api/json", processReceivedQueryJSONHandler)
 	router.HandleFunc("/modify", OperatorParametersHandler).Methods("GET")
 	router.HandleFunc("/echo", wsHandler)
+	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static")))
 	go echo()
 
 	//http.ListenAndServe(":4040", nil)
@@ -90,7 +93,7 @@ func showQueryHandler(w http.ResponseWriter, r *http.Request) {
 	// fmt.Printf("Route Variable: %s\n", vars["queryid"])
 	// Add a switch condition to read different
 
-	readJSONFile(w)
+	// readJSONFile(w)
 
 	fp := path.Join("templates", "index.html")
 	tmpl, err := template.ParseFiles(fp)
@@ -158,14 +161,15 @@ func showQueryHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // Reading data from json file and populate struct variable
-func readJSONFile(w http.ResponseWriter) {
+// func readJSONFile(w http.ResponseWriter)
+func readJSONFile() {
 
 	// Open our jsonFile
 	jsonFile, err := os.Open("output.json")
 
 	// if we os.Open returns an error then handle it
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		//w.WriteHeader(http.StatusInternalServerError)
 		log.Println(err)
 		fmt.Println(err)
 	}
