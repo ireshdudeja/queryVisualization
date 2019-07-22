@@ -22,9 +22,9 @@
                 }).then(function (myJson) {
 
                     var nodes = myJson.nodes;
-                    console.log("Nodes: ", nodes);
+                    // console.log("Nodes: ", nodes);
                     var links = myJson.links;
-                    console.log("Links", links);
+                    // console.log("Links", links);
 
                     createGraph(nodes, links)
 
@@ -41,7 +41,7 @@
             var height = window.innerHeight / 2
             var cWidth = document.getElementById('dag').offsetWidth;
 
-            console.log("Width is: ", cWidth);
+            // console.log("Width is: ", cWidth);
 
             var svg = d3.select('#dag').append('svg')
             // svg.attr('width', '100%').attr('height', height)
@@ -81,7 +81,7 @@
                     .duration(150)
                     .attr("r", 16)
                 //.style("fill", "lightsteelblue");
-                console.log("Node is:", this)
+                // console.log("Node is:", this)
             }
 
             function mouseout() {
@@ -189,7 +189,7 @@
             var parametersObj = selectedNode.parameters;
             var allowedCharts = selectedNode.supportedCharts;
 
-            console.log("selected Node:", selectedNode)
+            // console.log("selected Node:", selectedNode)
 
             const values = Object.values(parametersObj)
 
@@ -198,8 +198,8 @@
                 var initialValue = arrayItem.initialValue;
                 chartLabels.push(name);
                 chartData.push(initialValue);
-                console.log(name);
-                console.log(initialValue);
+                // console.log(name);
+                // console.log(initialValue);
             });
 
 
@@ -209,12 +209,13 @@
 
         }
 
-
+        var paramChartsArray = [];
         function createParametersCards(paramObj) {
 
             let cardBody = document.getElementById("param-cards-columns");
             while (cardBody.firstChild) {
                 cardBody.removeChild(cardBody.firstChild);
+                paramChartsArray = [];
             }
 
             // const values = Object.values(paramObj)
@@ -262,57 +263,79 @@
 
             // });
 
-
+           
             Object.keys(paramObj).forEach(function (key) {
 
-                console.log(key, paramObj[key].name);
-                var name = paramObj[key].name;
+                // console.log(key, paramObj[key].name);
+                var paramName = paramObj[key].name;
                 var initialValue = paramObj[key].initialValue;
 
-                let outerDiv = cardBody.appendChild(document.createElement('div'));
-                outerDiv.setAttribute("class", "card text-right shadow-sm bg-white rounded");
+                let cardDiv = cardBody.appendChild(document.createElement('div'));
+                cardDiv.setAttribute("class", "card text-right shadow-sm bg-white rounded");
 
-                let headerDiv = outerDiv.appendChild(document.createElement('div'));
-                headerDiv.setAttribute("class", "card-header");
+                let cardHeaderDiv = cardDiv.appendChild(document.createElement('div'));
+                cardHeaderDiv.setAttribute("class", "card-header");
 
-                let input = headerDiv.appendChild(document.createElement('input'));
-                input.setAttribute("class", "checkbox-cards form-check-input");
-                input.setAttribute("type", "checkbox");
-                input.setAttribute("id", name);
-                input.setAttribute("name", name);
-                input.setAttribute("value", initialValue);
+                let checkboxInput = cardHeaderDiv.appendChild(document.createElement('input'));
+                checkboxInput.setAttribute("class", "checkbox-cards form-check-input");
+                checkboxInput.setAttribute("type", "checkbox");
+                checkboxInput.setAttribute("id", paramName);
+                checkboxInput.setAttribute("name", paramName);
+                checkboxInput.setAttribute("value", initialValue);
 
-                let checkBoxLabel = headerDiv.appendChild(document.createElement('label'));
+                let checkBoxLabel = cardHeaderDiv.appendChild(document.createElement('label'));
                 checkBoxLabel.setAttribute("class", "form-check-label text-primary text-uppercase");
-                checkBoxLabel.setAttribute("for", name);
-                checkBoxLabel.innerHTML = name;
+                checkBoxLabel.setAttribute("for", paramName);
+                checkBoxLabel.innerHTML = paramName;
 
 
-                let innerDiv = outerDiv.appendChild(document.createElement('div'));
-                innerDiv.setAttribute("class", "card-body");
+                let cardBodyDiv = cardDiv.appendChild(document.createElement('div'));
+                cardBodyDiv.setAttribute("class", "card-body");
 
-                // let h5 = innerDiv.appendChild(document.createElement('h5'));
-                // h5.setAttribute("class", "card-title text-xs font-weight-normal text-primary text-uppercase mb-1");
-                // h5.innerHTML = name;
-
-                let p = innerDiv.appendChild(document.createElement('p'));
+                let p = cardBodyDiv.appendChild(document.createElement('p'));
                 p.setAttribute("class", "card-text h1 mb-0 font-weight-bold text-gray-800");
                 p.setAttribute("id", key + "_"); // Assigning unique id to p element
                 p.innerHTML = initialValue;
 
 
-                let chartDiv = innerDiv.appendChild(document.createElement('div'));
+                let chartDiv = cardDiv.appendChild(document.createElement('div'));
                 chartDiv.setAttribute("id", key);
-
+                /*
                 function getData() {
                     return initialValue;
                 }
+
+                var layout = {
+                    showlegend: false,
+                    height: 150,
+                    // xaxis: {
+                    //     autorange: true,
+                    //     showgrid: false,
+                    //     zeroline: false,
+                    //     showline: false,
+                    //     autotick: true,
+                    //     ticks: '',
+                    //     showticklabels: false
+                    //   },
+                    //   yaxis: {
+                    //     autorange: true,
+                    //     showgrid: false,
+                    //     zeroline: false,
+                    //     showline: false,
+                    //     autotick: true,
+                    //     ticks: '',
+                    //     showticklabels: false
+                    //   }
+
+                };
+
                 Plotly.plot(key, [{
                     y: [getData()],
                     type: 'line',
-                    // fill: "tonexty"
+                    fill: "tonexty"
 
-                }]);
+                }], layout, {displayModeBar: false, responsive: true});
+                */
 
                 // var cnt = 0;
                 // setInterval(function () {
@@ -327,7 +350,88 @@
                 //     }
                 // }, 500);
 
+                var paramLiveChart = {};
+
+                paramLiveChart[key] = Highcharts.chart(key, {
+                    chart: {
+                        type: 'spline',
+                        animation: Highcharts.svg, // don't animate in old IE
+                        marginRight: 10,
+                        events:
+                        {
+                            load: reloadCards()
+                            // function () {
+                
+                            //     // set up the updating of the chart each second
+                            //     var series = this.series[0];
+                            //     setInterval(function () {
+                            //         var x = (new Date()).getTime(), // current time
+                            //             y = parseFloat(initialValue);
+                            //         series.addPoint([x, y], true, true);
+                            //     }, 1000);
+                            // }
+                        }
+                    },
+                
+                    time: {
+                        useUTC: false
+                    },
+                
+                    title: {
+                        text: ''
+                    },
+                    xAxis: {
+                        type: '',
+                        tickPixelInterval: 1500
+                    },
+                    yAxis: {
+                        title: {
+                            text: ''
+                        }
+                        // ,
+                        // plotLines: [{
+                        //     value: 0,
+                        //     width: 1,
+                        //     color: '#808080'
+                        // }]
+                    },
+                    tooltip: {
+                        headerFormat: '<b>{series.name}</b><br/>',
+                        pointFormat: '<br/>{point.y:.2f}'
+                    },
+                    legend: {
+                        enabled: false
+                    },
+                    exporting: {
+                        enabled: false
+                    },
+                    series: [{
+                        name: paramName,
+                        data: [
+                            parseFloat(initialValue)
+                        ]
+                        // (function () {
+                        //     // generate an array of random data
+                        //     var data = [],
+                        //         time = (new Date()).getTime(),
+                        //         i;
+                
+                        //     for (i = -19; i <= 0; i += 1) {
+                        //         data.push({
+                        //             x: time + i * 1000,
+                        //             y: Math.random()
+                        //         });
+                        //     }
+                        //     return data;
+                        // }())
+                    }]
+                });
+
+                paramChartsArray.push(paramLiveChart);
+
             });
+
+            console.log("Param chart array is :", paramChartsArray);
 
         }
 
@@ -336,7 +440,7 @@
         var newBigChart = null;
 
         function displayMoreChartsButton(supportedCharts) {
-            console.log("Supported charts: ", supportedCharts);
+            // console.log("Supported charts: ", supportedCharts);
 
             if (supportedCharts.length != 0) {
                 document.getElementById("more-charts-button").style.display = "block";
@@ -369,7 +473,7 @@
 
             newBigChartArray = []
             var checkboxes = document.getElementsByClassName("checkbox-cards")
-            console.log("Selected Checkboxes:", checkboxes)
+            // console.log("Selected Checkboxes:", checkboxes)
 
             var numberOfCheckedItems = 0;
             for (var i = 0; i < checkboxes.length; i++) {
@@ -378,7 +482,7 @@
                     tempObj[checkboxes[i].name] = checkboxes[i].value;
 
                     newBigChartArray.push(tempObj)
-                    console.log("New BigChart Object:", tempObj)
+                    // console.log("New BigChart Object:", tempObj)
                     numberOfCheckedItems++;
                 }
             }
@@ -387,7 +491,7 @@
                 document.getElementById("big-chart-row").style.display = "none"; // block | none
                 alert("Select atleast one checkbox!");
             } else {
-                console.log("New BigChart Array values:", newBigChartArray)
+                // console.log("New BigChart Array values:", newBigChartArray)
                 createNewBigChart(newBigChartArray, currentChartType)
                 document.getElementById("big-chart-row").style.display = "block"; // block | none
             }
@@ -528,7 +632,7 @@
             //d3.select("#dag").select("svg").remove();
             // fetchData();
             reloadCards();
-            console.log("Received data through socket:", e.data)
+            // console.log("Received data through socket:", e.data)
         };
 
         async function reloadCards() {
@@ -536,23 +640,26 @@
             const response = await fetch(api_url);
             const data = await response.json();
             const { nodes, links } = data;
-            console.log("\nNodes:", nodes);
+            // console.log("\nNodes:", nodes);
 
             nodes.forEach(function (node) {
                 if (currentlySelectedNode != null) {
+
                     if (node.id == currentlySelectedNode.id) {
-                        console.log("Selected Node is", node.id)
+                        // console.log("Selected Node is", node.id)
 
                         Object.keys(node.parameters).forEach(function (key) {
-                            console.log("Parameter Key is:", key);
+                            // console.log("Parameter Key is:", key);
                             var p = document.getElementById(key + '_');
                             p.innerHTML = node.parameters[key].initialValue;
                             
+
                             // Update Chart
                             function getData() {
                                 return node.parameters[key].initialValue;;
                             }
 
+                            /*
                             var cnt = 0;
                             //The setInterval() calls a function at specified intervals (500 milliseconds).
                             // setInterval(function () {
@@ -566,6 +673,23 @@
                                     });
                                 }
                             // }, 500);
+                            */
+
+                            paramChartsArray.forEach(function(chart) {
+                                
+                                // Parsing single object, i will give key of object chart
+                                for(var i in chart){
+                                    if (i == key) {
+                                        console.log("Chart is:", chart)
+                                        chart[i].series[0].addPoint(
+                                            parseFloat(getData())
+                                    );
+                                    }
+                                  }
+                                
+                            });
+
+                           
 
                         });
 
@@ -582,6 +706,7 @@
 
         }
 
+        
 
 
 
