@@ -209,7 +209,6 @@
 
         }
 
-        var paramChartsArray = [];
         function createParametersCards(paramObj) {
 
             let cardBody = document.getElementById("param-cards-columns");
@@ -269,6 +268,7 @@
                 // console.log(key, paramObj[key].name);
                 var paramName = paramObj[key].name;
                 var initialValue = paramObj[key].initialValue;
+                var visualization = paramObj[key].visualization;
 
                 let cardDiv = cardBody.appendChild(document.createElement('div'));
                 cardDiv.setAttribute("class", "card text-right shadow-sm bg-white rounded");
@@ -298,140 +298,78 @@
                 p.innerHTML = initialValue;
 
 
-                let chartDiv = cardDiv.appendChild(document.createElement('div'));
+                let chartDiv = cardBodyDiv.appendChild(document.createElement('div'));
                 chartDiv.setAttribute("id", key);
-                /*
+                
                 function getData() {
                     return initialValue;
                 }
 
-                var layout = {
-                    showlegend: false,
-                    height: 150,
-                    // xaxis: {
-                    //     autorange: true,
-                    //     showgrid: false,
-                    //     zeroline: false,
-                    //     showline: false,
-                    //     autotick: true,
-                    //     ticks: '',
-                    //     showticklabels: false
-                    //   },
-                    //   yaxis: {
-                    //     autorange: true,
-                    //     showgrid: false,
-                    //     zeroline: false,
-                    //     showline: false,
-                    //     autotick: true,
-                    //     ticks: '',
-                    //     showticklabels: false
-                    //   }
+                switch (visualization) {
+                    case 'progressBar':
+                    let progressDiv = chartDiv.appendChild(document.createElement('div')); 
+                    progressDiv.setAttribute("class","progress");
+                    let progressBarDiv = progressDiv.appendChild(document.createElement('div')); 
+                    progressBarDiv.setAttribute("class","progress-bar");
+                    progressBarDiv.setAttribute("role","progressbar");
+                    progressBarDiv.setAttribute("style","width:"+initialValue+"%;");
+                    progressBarDiv.setAttribute("aria-valuenow",initialValue);
+                    progressBarDiv.setAttribute("aria-valuemin","0");
+                    progressBarDiv.setAttribute("aria-valuemax","100");
+                    progressBarDiv.innerText = initialValue + "%";
+                      break;
 
-                };
-
-                Plotly.plot(key, [{
-                    y: [getData()],
-                    type: 'line',
-                    fill: "tonexty"
-
-                }], layout, {displayModeBar: false, responsive: true});
-                */
-
-                // var cnt = 0;
-                // setInterval(function () {
-                //     Plotly.extendTraces(key, { y: [[getData()]] }, [0]);
-                //     cnt++;
-                //     if (cnt > 30) {
-                //         Plotly.relayout(key, {
-                //             xaxis: {
-                //                 range: [cnt - 30, cnt]
-                //             }
-                //         });
-                //     }
-                // }, 500);
-
-                var paramLiveChart = {};
-
-                paramLiveChart[key] = Highcharts.chart(key, {
-                    chart: {
-                        type: 'spline',
-                        animation: Highcharts.svg, // don't animate in old IE
-                        marginRight: 10,
-                        events:
-                        {
-                            load: reloadCards()
-                            // function () {
-                
-                            //     // set up the updating of the chart each second
-                            //     var series = this.series[0];
-                            //     setInterval(function () {
-                            //         var x = (new Date()).getTime(), // current time
-                            //             y = parseFloat(initialValue);
-                            //         series.addPoint([x, y], true, true);
-                            //     }, 1000);
-                            // }
-                        }
-                    },
-                
-                    time: {
-                        useUTC: false
-                    },
-                
-                    title: {
-                        text: ''
-                    },
-                    xAxis: {
-                        type: '',
-                        tickPixelInterval: 1500
-                    },
-                    yAxis: {
-                        title: {
-                            text: ''
-                        }
-                        // ,
-                        // plotLines: [{
-                        //     value: 0,
-                        //     width: 1,
-                        //     color: '#808080'
-                        // }]
-                    },
-                    tooltip: {
-                        headerFormat: '<b>{series.name}</b><br/>',
-                        pointFormat: '<br/>{point.y:.2f}'
-                    },
-                    legend: {
-                        enabled: false
-                    },
-                    exporting: {
-                        enabled: false
-                    },
-                    series: [{
-                        name: paramName,
-                        data: [
-                            parseFloat(initialValue)
-                        ]
-                        // (function () {
-                        //     // generate an array of random data
-                        //     var data = [],
-                        //         time = (new Date()).getTime(),
-                        //         i;
-                
-                        //     for (i = -19; i <= 0; i += 1) {
-                        //         data.push({
-                        //             x: time + i * 1000,
-                        //             y: Math.random()
+                    default:
+                        var layout = {
+                            showlegend: false,
+                            // height: 150,
+                            // xaxis: {
+                            //     autorange: true,
+                            //     showgrid: false,
+                            //     zeroline: false,
+                            //     showline: false,
+                            //     autotick: true,
+                            //     ticks: '',
+                            //     showticklabels: false
+                            //   },
+                            //   yaxis: {
+                            //     autorange: true,
+                            //     showgrid: false,
+                            //     zeroline: false,
+                            //     showline: false,
+                            //     autotick: true,
+                            //     ticks: '',
+                            //     showticklabels: false
+                            //   }
+        
+                        };
+                        
+        
+                        Plotly.plot(key, [{
+                            y: [getData()],
+                            type: 'line',
+                            // fill: "tonexty"
+        
+                        }], layout, {displayModeBar: false, responsive: true});
+                        
+        
+                        // var cnt = 0;
+                        // setInterval(function () {
+                        //     Plotly.extendTraces(key, { y: [[getData()]] }, [0]);
+                        //     cnt++;
+                        //     if (cnt > 30) {
+                        //         Plotly.relayout(key, {
+                        //             xaxis: {
+                        //                 range: [cnt - 30, cnt]
+                        //             }
                         //         });
                         //     }
-                        //     return data;
-                        // }())
-                    }]
-                });
+                        // }, 500);
+                  }
 
-                paramChartsArray.push(paramLiveChart);
+
 
             });
-
-            console.log("Param chart array is :", paramChartsArray);
 
         }
 
@@ -659,7 +597,7 @@
                                 return node.parameters[key].initialValue;;
                             }
 
-                            /*
+                            
                             var cnt = 0;
                             //The setInterval() calls a function at specified intervals (500 milliseconds).
                             // setInterval(function () {
@@ -673,21 +611,7 @@
                                     });
                                 }
                             // }, 500);
-                            */
-
-                            paramChartsArray.forEach(function(chart) {
-                                
-                                // Parsing single object, i will give key of object chart
-                                for(var i in chart){
-                                    if (i == key) {
-                                        console.log("Chart is:", chart)
-                                        chart[i].series[0].addPoint(
-                                            parseFloat(getData())
-                                    );
-                                    }
-                                  }
-                                
-                            });
+                            
 
                            
 

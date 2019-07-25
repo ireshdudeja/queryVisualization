@@ -24,9 +24,10 @@ type Node struct {
 }
 
 type Parameter struct {
-	Function     string `json:"function"`
-	InitialValue string `json:"initialValue"`
-	Name         string `json:"name"`
+	Function      string `json:"function"`
+	InitialValue  string `json:"initialValue"`
+	Name          string `json:"name"`
+	Visualization string `json:"visualization"`
 }
 
 type Link struct {

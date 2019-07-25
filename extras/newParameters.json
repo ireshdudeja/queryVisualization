@@ -28,7 +28,7 @@
           "function": "",
           "initialValue": "96",
           "name": "Operator Cost",
-          "visualization": "progressBar"
+          "visualization": "line"
         },
         "num_execution": {
           "function": "",
