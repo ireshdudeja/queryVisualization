@@ -273,20 +273,23 @@
                 let cardDiv = cardBody.appendChild(document.createElement('div'));
                 cardDiv.setAttribute("class", "card text-right shadow-sm bg-white rounded");
 
-                let cardHeaderDiv = cardDiv.appendChild(document.createElement('div'));
-                cardHeaderDiv.setAttribute("class", "card-header");
+                let cardHeaderElement = cardDiv.appendChild(document.createElement('h5'));
+                cardHeaderElement.setAttribute("class", "card-header text-primary");
+                cardHeaderElement.innerText = paramName;
 
-                let checkboxInput = cardHeaderDiv.appendChild(document.createElement('input'));
+                /*
+                let checkboxInput = cardHeaderElement.appendChild(document.createElement('input'));
                 checkboxInput.setAttribute("class", "checkbox-cards form-check-input");
                 checkboxInput.setAttribute("type", "checkbox");
                 checkboxInput.setAttribute("id", paramName);
                 checkboxInput.setAttribute("name", paramName);
                 checkboxInput.setAttribute("value", initialValue);
 
-                let checkBoxLabel = cardHeaderDiv.appendChild(document.createElement('label'));
+                let checkBoxLabel = cardHeaderElement.appendChild(document.createElement('label'));
                 checkBoxLabel.setAttribute("class", "form-check-label text-primary text-uppercase");
                 checkBoxLabel.setAttribute("for", paramName);
                 checkBoxLabel.innerHTML = paramName;
+                */
 
 
                 let cardBodyDiv = cardDiv.appendChild(document.createElement('div'));
@@ -297,13 +300,21 @@
                 p.setAttribute("id", key + "_"); // Assigning unique id to p element
                 p.innerHTML = initialValue;
 
+                let breakElement = cardBodyDiv.appendChild(document.createElement('br'));
+
 
                 let chartDiv = cardBodyDiv.appendChild(document.createElement('div'));
                 chartDiv.setAttribute("id", key);
                 
+                
                 function getData() {
-                    return initialValue;
+                    return parseFloat(initialValue); 
                 }
+
+                function getTempData() {
+                    return Math.random(); 
+                }
+
 
                 switch (visualization) {
                     case 'progressBar':
@@ -322,52 +333,72 @@
                     default:
                         var layout = {
                             showlegend: false,
-                            // height: 150,
-                            // xaxis: {
-                            //     autorange: true,
-                            //     showgrid: false,
-                            //     zeroline: false,
-                            //     showline: false,
-                            //     autotick: true,
-                            //     ticks: '',
-                            //     showticklabels: false
-                            //   },
-                            //   yaxis: {
-                            //     autorange: true,
-                            //     showgrid: false,
-                            //     zeroline: false,
-                            //     showline: false,
-                            //     autotick: true,
-                            //     ticks: '',
-                            //     showticklabels: false
-                            //   }
+                            autosize: true,
+                            // paper_bgcolor: '#7f7f7f',
+                            // plot_bgcolor: '#c7c7c7',
+                            margin: {
+                                l: 60,
+                                r: 50,
+                                b: 40,
+                                t: 10,
+                                pad: 4
+                              },
+                             height: 250,
+                            xaxis: {
+                                autorange: true,
+                                showgrid: false,
+                                zeroline: false,
+                                showline: false,
+                                autotick: true,
+                                ticks: '',
+                                showticklabels: false
+                              },
+                              yaxis: {
+                                autorange: true,
+                                showgrid: false,
+                                zeroline: false,
+                                showline: false,
+                                autotick: true,
+                                ticks: '',
+                                showticklabels: false
+                              }
         
                         };
+
+                        
                         
         
                         Plotly.plot(key, [{
                             y: [getData()],
-                            type: 'line',
-                            // fill: "tonexty"
+                            mode: 'lines', //type: 'line' mode: 'lines+markers' mode: 'lines'
+                            // fill: "tonexty",
+                            line: {color: '#80CAF6'}
         
                         }], layout, {displayModeBar: false, responsive: true});
                         
         
                         // var cnt = 0;
                         // setInterval(function () {
-                        //     Plotly.extendTraces(key, { y: [[getData()]] }, [0]);
+                        //     Plotly.extendTraces(key, { y: [[getTempData()]] }, [0]);
                         //     cnt++;
-                        //     if (cnt > 30) {
+                        //     if (cnt > 10) {
                         //         Plotly.relayout(key, {
                         //             xaxis: {
-                        //                 range: [cnt - 30, cnt]
+                        //                 range: [cnt - 10, cnt],
+                        //                 showgrid: false,
+                        //                 zeroline: false,
+                        //                 showline: false,
+                        //                 autotick: true,
+                        //                 ticks: '',
+                        //                 showticklabels: false
+
                         //             }
                         //         });
                         //     }
                         // }, 500);
                   }
 
-
+                  chartDiv.style.display = "none";
 
             });
 
@@ -580,6 +611,10 @@
             const { nodes, links } = data;
             // console.log("\nNodes:", nodes);
 
+
+            d3.select("#dag").select("svg").remove();
+            createGraph(nodes, links);
+
             nodes.forEach(function (node) {
                 if (currentlySelectedNode != null) {
 
@@ -588,33 +623,56 @@
 
                         Object.keys(node.parameters).forEach(function (key) {
                             // console.log("Parameter Key is:", key);
-                            var p = document.getElementById(key + '_');
-                            p.innerHTML = node.parameters[key].initialValue;
-                            
 
-                            // Update Chart
                             function getData() {
-                                return node.parameters[key].initialValue;;
+                                return parseFloat(node.parameters[key].initialValue);
+                            }
+
+                            var visualization = node.parameters[key].visualization;
+
+                            var chartDiv = document.getElementById(key);
+                            chartDiv.style.display = "block";
+
+                            var p = document.getElementById(key + '_');
+                            p.innerHTML = getData();
+                            
+                            switch (visualization) {
+                                case 'progressBar':
+                                        $("#"+key)
+                                        .children()
+                                        .children()
+                                        .css("width", getData() + "%")
+                                        .attr("aria-valuenow", getData())
+                                        .text(getData() + "%");
+
+                                default:
+                                    // Update Chart
+                                    function rand() {
+                                        return Math.random();
+                                        }
+
+                                    
+                                    var cnt = 0;
+                                    //The setInterval() calls a function at specified intervals (500 milliseconds).
+                                    // setInterval(function () {
+                                        Plotly.extendTraces(key, {
+                                            y: [[getData()]]
+                                            }, [0]);
+                                        // Plotly.extendTraces(key, { y: [[getData()]] }, [0]);
+                                        cnt++;
+                                        if (cnt > 10) {
+                                            Plotly.relayout(key, {
+                                                xaxis: {
+                                                    range: [cnt - 10, cnt]
+                                                }
+                                            });
+                                        }
+                                    // }, 500);
+
                             }
 
                             
-                            var cnt = 0;
-                            //The setInterval() calls a function at specified intervals (500 milliseconds).
-                            // setInterval(function () {
-                                Plotly.extendTraces(key, { y: [[getData()]] }, [0]);
-                                cnt++;
-                                if (cnt > 10) {
-                                    Plotly.relayout(key, {
-                                        xaxis: {
-                                            range: [cnt - 10, cnt]
-                                        }
-                                    });
-                                }
-                            // }, 500);
                             
-
-                           
-
                         });
 
                     }
@@ -624,8 +682,6 @@
                     console.log("No node is selected");
                 }
 
-                d3.select("#dag").select("svg").remove();
-                createGraph(nodes, links);
             });
 
         }

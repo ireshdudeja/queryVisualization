@@ -6,23 +6,53 @@
       "level": 2,
       "supportedCharts": ["bar", "line", "pie"],
       "parameters": {
+        "cpu_cost": {
+          "function": "",
+          "initialValue": "6008",
+          "name": "CPU cost",
+          "visualization": "line"
+        },
+        "io_cost": {
+          "function": "",
+          "initialValue": "0",
+          "name": "I/O Cost",
+          "visualization": "line"
+        },
         "max_key": {
           "function": "maximum",
-          "initialValue": "33",
+          "initialValue": "37.00",
           "name": "Maximum Key",
-          "chart": "line"
+          "visualization": "line"
         },
         "min_key": {
           "function": "minimum",
-          "initialValue": "16",
+          "initialValue": "4.00",
           "name": "Minimum Key",
-          "chart": "line"
+          "visualization": "line"
+        },
+        "num_execution": {
+          "function": "",
+          "initialValue": "1",
+          "name": "Number of Executions",
+          "visualization": "line"
         },
         "num_tuples": {
           "function": "",
-          "initialValue": "67",
+          "initialValue": "110.00",
           "name": "Number of Tuples",
-          "chart": "line"
+          "visualization": "line"
+        },
+        "operator_cost": {
+          "function": "",
+          "initialValue": "96",
+          "name": "Operator Cost",
+          "visualization": "progressBar"
+        },
+        "row_size": {
+          "function": "",
+          "initialValue": "329",
+          "name": "Row Size",
+          "visualization": "line"
         }
       }
     },
@@ -36,25 +66,25 @@
           "function": "maximum",
           "initialValue": "37.00",
           "name": "Maximum Key",
-          "chart": "line"
+          "visualization": "line"
         },
         "min_key": {
           "function": "minimum",
-          "initialValue": "5.00",
+          "initialValue": "4.00",
           "name": "Minimum Key",
-          "chart": "line"
+          "visualization": "line"
         },
         "num_tuples": {
           "function": "",
           "initialValue": "110.00",
           "name": "Number of Tuples",
-          "chart": "line"
+          "visualization": "line"
         },
         "positive": {
           "function": "increment",
-          "initialValue": "181.00",
+          "initialValue": "189.00",
           "name": "Positive",
-          "chart": "line"
+          "visualization": "line"
         }
       }
     },
@@ -68,19 +98,19 @@
           "function": "maximum",
           "initialValue": "49.00",
           "name": "Maximum Key",
-          "chart": "line"
+          "visualization": "line"
         },
         "min_key": {
           "function": "minimum",
           "initialValue": "10.00",
           "name": "Minimum Key",
-          "chart": "line"
+          "visualization": "line"
         },
         "num_tuples": {
           "function": "",
           "initialValue": "68.00",
           "name": "Number of Tuples",
-          "chart": "line"
+          "visualization": "line"
         }
       }
     },
@@ -94,19 +124,19 @@
           "function": "maximum",
           "initialValue": "14",
           "name": "Maximum Key",
-          "chart": "line"
+          "visualization": "line"
         },
         "min_key": {
           "function": "minimum",
           "initialValue": "120",
           "name": "Minimum Key",
-          "chart": "line"
+          "visualization": "line"
         },
         "num_tuples": {
           "function": "",
           "initialValue": "25",
           "name": "Number of Tuples",
-          "chart": "line"
+          "visualization": "line"
         }
       }
     }
