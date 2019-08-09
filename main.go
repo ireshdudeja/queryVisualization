@@ -57,19 +57,14 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	// router.PathPrefix("/").Handler(http.FileServer(http.Dir("./templates"))).Methods("GET")
 	readJSONFile()
 
-	//router.HandleFunc("/", showQueryHandler).Methods("GET")
 	router.HandleFunc("/api", displayQueryJSONHandler)
 	router.HandleFunc("/api/json", processReceivedQueryJSONHandler)
 	router.HandleFunc("/modify", OperatorParametersHandler).Methods("GET")
 	router.HandleFunc("/echo", wsHandler)
 	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static")))
 	go echo()
-
-	//http.ListenAndServe(":4040", nil)
-	//log.Fatal(http.ListenAndServe(":4040", router))
 
 	if err := http.ListenAndServe(addr, router); err != nil {
 		panic(err)
@@ -80,7 +75,6 @@ func determineListenAddress() (string, error) {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "4000"
-		//return "", fmt.Errorf("$PORT not set")
 	}
 	log.Println("Server Listening on Port Number: " + port)
 	return ":" + port, nil
@@ -89,12 +83,6 @@ func determineListenAddress() (string, error) {
 var query Query
 
 func showQueryHandler(w http.ResponseWriter, r *http.Request) {
-
-	// vars := mux.Vars(r)
-	// fmt.Printf("Route Variable: %s\n", vars["queryid"])
-	// Add a switch condition to read different
-
-	// readJSONFile(w)
 
 	fp := path.Join("templates", "index.html")
 	tmpl, err := template.ParseFiles(fp)
@@ -108,64 +96,11 @@ func showQueryHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	// Following commented code checks if the
-	// parameters used in GET request matches
-	// with parameters present in json file for
-	// a particular opertorId
-	/*
-		v := r.URL.Query()
-
-		// fmt.Printf("Query is: %v", v)
-
-		operatorId := v.Get("id")
-		// email := v.Get("email")
-		// fmt.Printf("Operator ID: %s, Email: %s", operatorId, email)
-
-
-			// Removing key value pair for "id"
-			// otherwise allParametersExists will be false for
-			// _, ok := node.Parameters[key] in code below
-
-		delete(v, "id")
-
-		for _, node := range query.Nodes {
-
-			fmt.Printf("Node name: %s\n", node.Label)
-			if node.ID == operatorId {
-				allParametersExists := true
-
-				fmt.Printf("  ID exists\n")
-				for key, value := range v {
-
-					if _, ok := node.Parameters[key]; ok {
-						fmt.Printf("	KEY EXISTS and NEW VALUE. %s = %s\n", key, value)
-
-					} else {
-						allParametersExists = false
-						fmt.Println("allParametersExists value ", allParametersExists, value)
-					}
-
-				}
-
-				if allParametersExists {
-					for key, value := range v {
-						node.Parameters[key] = value[0]
-					}
-					fmt.Printf("Updated Paramters Dict %v", node.Parameters)
-
-				}
-
-			}
-		}
-	*/
-
 }
 
 // Reading data from json file and populate struct variable
-// func readJSONFile(w http.ResponseWriter)
 func readJSONFile() {
 
-	// Open our jsonFile
 	jsonFile, err := os.Open("output.json")
 
 	// if we os.Open returns an error then handle it
@@ -252,8 +187,6 @@ func OperatorParametersHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 	}
-
-	// fmt.Printf("\n ******** NODES: ******* \n %v", query.Nodes)
 
 	if idExists == false {
 		fmt.Printf("\nOperator id doesn't exist and Paramters can't be Changed!\n")

@@ -12,10 +12,6 @@
         // Function Definitions
         function fetchData() {
 
-            // Fetch json data
-            // Use https://d059d46c-898c-4ad8-bd3d-ec8d4c5c870d.mock.pstmn.io/dv (to get data from postman)
-            // Use 'http://localhost:4000/api' (to get data from local server)
-
             fetch(api_url)
                 .then(function (response) {
                     return response.json();
@@ -33,18 +29,11 @@
 
         function createGraph(nodes, links) {
 
-            // Hide stats when data is directly pushed from server using websocket
-            // document.getElementById("stats-row").style.display = "none";
-
-
             var width = window.innerWidth
             var height = window.innerHeight / 2
             var cWidth = document.getElementById('dag').offsetWidth;
 
-            // console.log("Width is: ", cWidth);
-
             var svg = d3.select('#dag').append('svg')
-            // svg.attr('width', '100%').attr('height', height)
             svg.attr('viewBox', '0 0 ' + cWidth + ' ' + height);
 
             // simulation setup with all forces
@@ -176,7 +165,6 @@
 
         function selectNode(selectedNode) {
 
-            // document.getElementById("stats-row").style.display = "none"; // block | none
             document.getElementById("param-cards-row").style.display = "block"; // block | none
             document.getElementById("big-chart-row").style.display = "none"; // block | none
 
@@ -189,8 +177,6 @@
             var parametersObj = selectedNode.parameters;
             var allowedCharts = selectedNode.supportedCharts;
 
-            // console.log("selected Node:", selectedNode)
-
             const values = Object.values(parametersObj)
 
             values.forEach(function (arrayItem) {
@@ -198,8 +184,6 @@
                 var initialValue = arrayItem.initialValue;
                 chartLabels.push(name);
                 chartData.push(initialValue);
-                // console.log(name);
-                // console.log(initialValue);
             });
 
 
@@ -217,55 +201,9 @@
                 paramChartsArray = [];
             }
 
-            // const values = Object.values(paramObj)
-
-            // values.forEach(function (arrayItem) {
-            //     var name = arrayItem.name;
-            //     var initialValue = arrayItem.initialValue;
-
-            //     let outerDiv = cardBody.appendChild(document.createElement('div'));
-            //     outerDiv.setAttribute("class", "card text-right shadow-sm bg-white rounded");
-
-            //     let headerDiv = outerDiv.appendChild(document.createElement('div'));
-            //     headerDiv.setAttribute("class", "card-header");
-
-            //     let input = headerDiv.appendChild(document.createElement('input'));
-            //     input.setAttribute("class", "checkbox-cards form-check-input");
-            //     input.setAttribute("type", "checkbox");
-            //     input.setAttribute("id", name);
-            //     input.setAttribute("name", name);
-            //     input.setAttribute("value", initialValue);
-
-            //     let checkBoxLabel = headerDiv.appendChild(document.createElement('label'));
-            //     checkBoxLabel.setAttribute("class", "form-check-label text-primary text-uppercase");
-            //     checkBoxLabel.setAttribute("for", name);
-            //     checkBoxLabel.innerHTML = name;
-
-
-            //     let innerDiv = outerDiv.appendChild(document.createElement('div'));
-            //     innerDiv.setAttribute("class", "card-body");
-
-            //     // let h5 = innerDiv.appendChild(document.createElement('h5'));
-            //     // h5.setAttribute("class", "card-title text-xs font-weight-normal text-primary text-uppercase mb-1");
-            //    // h5.innerHTML = name;
-
-            //     let p = innerDiv.appendChild(document.createElement('p'));
-            //     p.setAttribute("class", "card-text h4 mb-0 font-weight-bold text-gray-800");
-            //     p.innerHTML = initialValue
-
-
-            //     let chartDiv = innerDiv.appendChild(document.createElement('div'));
-            //     let chartCanvas = chartDiv.appendChild(document.createElement('canvas'));
-            //     chartCanvas.setAttribute("id", "cardLineChart");
-
-            //     new Chart(document.getElementById("cardLineChart"),{"type":"line","data":{"labels":["January","February","March","April","May","June","July"],"datasets":[{"label":"My First Dataset","data":[65,59,80,81,56,55,40],"fill":false,"borderColor":"rgb(75, 192, 192)","lineTension":0.1}]},"options":{}});
-
-            // });
-
            
             Object.keys(paramObj).forEach(function (key) {
 
-                // console.log(key, paramObj[key].name);
                 var paramName = paramObj[key].name;
                 var initialValue = paramObj[key].initialValue;
                 var visualization = paramObj[key].visualization;
@@ -276,21 +214,6 @@
                 let cardHeaderElement = cardDiv.appendChild(document.createElement('h5'));
                 cardHeaderElement.setAttribute("class", "card-header text-primary");
                 cardHeaderElement.innerText = paramName;
-
-                /*
-                let checkboxInput = cardHeaderElement.appendChild(document.createElement('input'));
-                checkboxInput.setAttribute("class", "checkbox-cards form-check-input");
-                checkboxInput.setAttribute("type", "checkbox");
-                checkboxInput.setAttribute("id", paramName);
-                checkboxInput.setAttribute("name", paramName);
-                checkboxInput.setAttribute("value", initialValue);
-
-                let checkBoxLabel = cardHeaderElement.appendChild(document.createElement('label'));
-                checkBoxLabel.setAttribute("class", "form-check-label text-primary text-uppercase");
-                checkBoxLabel.setAttribute("for", paramName);
-                checkBoxLabel.innerHTML = paramName;
-                */
-
 
                 let cardBodyDiv = cardDiv.appendChild(document.createElement('div'));
                 cardBodyDiv.setAttribute("class", "card-body");
@@ -420,26 +343,6 @@
                             }
                         
                         },
-
-                        
-                        // Add some life
-                        // function (chart) {
-                        //     if (!chart.renderer.forExport) {
-                        //         setInterval(function () {
-                        //             var point = chart.series[0].points[0],
-                        //                 newVal,
-                        //                 inc = Math.round((Math.random() - 0.5) * 20);
-                        
-                        //             newVal = point.y + inc;
-                        //             if (newVal < 0 || newVal > 200) {
-                        //                 newVal = point.y - inc;
-                        //             }
-                        
-                        //             point.update(newVal);
-                        
-                        //         }, 3000);
-                        //     }
-                        // }
                         );
                         break;
 
@@ -488,27 +391,6 @@
                             line: {color: '#80CAF6'}
         
                         }], layout, {displayModeBar: false, responsive: true});
-                        
-        
-                        // var cnt = 0;
-                        // setInterval(function () {
-                        //     Plotly.extendTraces(key, { y: [[getTempData()]] }, [0]);
-                        //     cnt++;
-                        //     if (cnt > 10) {
-                        //         Plotly.relayout(key, {
-                        //             xaxis: {
-                        //                 range: [cnt - 10, cnt],
-                        //                 showgrid: false,
-                        //                 zeroline: false,
-                        //                 showline: false,
-                        //                 autotick: true,
-                        //                 ticks: '',
-                        //                 showticklabels: false
-
-                        //             }
-                        //         });
-                        //     }
-                        // }, 500);
                   }
 
                   chartDiv.style.display = "none";
@@ -522,8 +404,6 @@
         var newBigChart = null;
 
         function displayMoreChartsButton(supportedCharts) {
-            // console.log("Supported charts: ", supportedCharts);
-
             if (supportedCharts.length != 0) {
                 document.getElementById("more-charts-button").style.display = "block";
                 addMenuOptions(supportedCharts);
@@ -555,7 +435,6 @@
 
             newBigChartArray = []
             var checkboxes = document.getElementsByClassName("checkbox-cards")
-            // console.log("Selected Checkboxes:", checkboxes)
 
             var numberOfCheckedItems = 0;
             for (var i = 0; i < checkboxes.length; i++) {
@@ -564,7 +443,6 @@
                     tempObj[checkboxes[i].name] = checkboxes[i].value;
 
                     newBigChartArray.push(tempObj)
-                    // console.log("New BigChart Object:", tempObj)
                     numberOfCheckedItems++;
                 }
             }
@@ -573,7 +451,6 @@
                 document.getElementById("big-chart-row").style.display = "none"; // block | none
                 alert("Select atleast one checkbox!");
             } else {
-                // console.log("New BigChart Array values:", newBigChartArray)
                 createNewBigChart(newBigChartArray, currentChartType)
                 document.getElementById("big-chart-row").style.display = "block"; // block | none
             }
@@ -711,10 +588,7 @@
         };
 
         socket.onmessage = function (e) {
-            //d3.select("#dag").select("svg").remove();
-            // fetchData();
             reloadCards();
-            // console.log("Received data through socket:", e.data)
         };
 
         async function reloadCards() {
@@ -722,7 +596,6 @@
             const response = await fetch(api_url);
             const data = await response.json();
             const { nodes, links } = data;
-            // console.log("\nNodes:", nodes);
 
 
             d3.select("#dag").select("svg").remove();
@@ -732,10 +605,8 @@
                 if (currentlySelectedNode != null) {
 
                     if (node.id == currentlySelectedNode.id) {
-                        // console.log("Selected Node is", node.id)
 
                         Object.keys(node.parameters).forEach(function (key) {
-                            // console.log("Parameter Key is:", key);
 
                             function getData() {
                                 return parseFloat(node.parameters[key].initialValue);
@@ -761,43 +632,21 @@
 
                                 case 'gauge':
                                         var chart=$("#"+key).highcharts();
-                                        console.log("High Chart:", chart);
-
-                                        // function (chart) {
                                             if (!chart.renderer.forExport) {
-                                                // setInterval(function () {
                                                     var point = chart.series[0].points[0],
                                                         newVal,
                                                         inc = Math.round((Math.random() - 0.5) * 20);
-                                        
-                                                    // newVal = point.y + inc;
-                                                    // if (newVal < 0 || newVal > 200) {
-                                                    //     newVal = point.y - inc;
-                                                    // }
-
                                                     newVal = getData();
                                                     point.update(newVal);
                                         
-                                                // }, 3000);
                                             }
-                                        // }
-                                        
-
                                 break;
-                                default:
-                                    // Update Chart
-                                    function rand() {
-                                        return Math.random();
-                                        }
 
-                                    
+                                default:
                                     var cnt = 0;
-                                    //The setInterval() calls a function at specified intervals (500 milliseconds).
-                                    // setInterval(function () {
                                         Plotly.extendTraces(key, {
                                             y: [[getData()]]
                                             }, [0]);
-                                        // Plotly.extendTraces(key, { y: [[getData()]] }, [0]);
                                         cnt++;
                                         if (cnt > 10) {
                                             Plotly.relayout(key, {
@@ -806,8 +655,6 @@
                                                 }
                                             });
                                         }
-                                    // }, 500);
-
                             }
 
                             
@@ -817,17 +664,9 @@
                     }
                 }
                 else {
-                    // Here we can reload whole page
                     console.log("No node is selected");
                 }
 
             });
 
         }
-
-        
-
-
-
-    //window.setTimeout(chart);
-   // window.addEventListener("resize", fetchData);
