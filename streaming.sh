@@ -76,4 +76,4 @@ curl -X GET 'http://localhost:4000/modify?id=1&max_key=86&min_key=03&num_tuples=
 sleep 2s
 curl -X GET 'http://localhost:4000/modify?id=1&max_key=86&min_key=03&num_tuples=108&operator_cost=12.94&cpu_cost=6557'
 sleep 2s
-curl -X GET 'http://localhost:4000/modify?id=1&max_key=86&min_key=03&num_tuples=508&operator_cost=76.94&cpu_cost=1157'
+curl -X GET 'http://localhost:4000/modify?id=1&max_key=86&min_key=03&num_tuples=508&operator_cost=76.94&cpu_cost=1557'

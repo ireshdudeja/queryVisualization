@@ -3,12 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
-	"path"
 	"strconv"
 
 	"github.com/gorilla/mux"
@@ -19,7 +17,6 @@ type Node struct {
 	ID         string               `json:"id"`
 	Label      string               `json:"label"`
 	Level      int                  `json:"level"`
-	Charts     []string             `json:"supportedCharts"`
 	Parameters map[string]Parameter `json:"parameters"`
 }
 
@@ -82,22 +79,6 @@ func determineListenAddress() (string, error) {
 
 var query Query
 
-func showQueryHandler(w http.ResponseWriter, r *http.Request) {
-
-	fp := path.Join("templates", "index.html")
-	tmpl, err := template.ParseFiles(fp)
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	if err := tmpl.Execute(w, nil); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-
-}
-
 // Reading data from json file and populate struct variable
 func readJSONFile() {
 
@@ -119,17 +100,12 @@ func readJSONFile() {
 	var result map[string]interface{}
 	json.Unmarshal([]byte(byteValue), &result)
 
-	fmt.Printf("Read JSON data: \n%+v\n", result["nodes"])
-
 	// unmarshal byteArray
 	json.Unmarshal(byteValue, &query)
 
-	fmt.Printf("\n Only Paramters of first node: %v\n", query.Nodes[0].Parameters)
 }
 
 func OperatorParametersHandler(w http.ResponseWriter, r *http.Request) {
-
-	fmt.Printf("Function called!!!!\n")
 
 	v := r.URL.Query() // will get map/dict of the query string
 
@@ -140,15 +116,15 @@ func OperatorParametersHandler(w http.ResponseWriter, r *http.Request) {
 
 	for i, node := range query.Nodes {
 
-		fmt.Printf("Node name: %s\n", node.Label)
+		// fmt.Printf("Node name: %s\n", node.Label)
 
 		// To check if the id entered n GET request is valid
 		if node.ID == operatorId {
 
-			fmt.Printf("  ID exists\n")
+			// fmt.Printf("  ID exists\n")
 			idExists = true
 
-			fmt.Printf("Value Array = %s\n", v)
+			// fmt.Printf("Value Array = %s\n", v)
 
 			for key, value := range v {
 				//fmt.Printf("KEY, VALUE! %s = %s\n", key, value)
@@ -157,7 +133,7 @@ func OperatorParametersHandler(w http.ResponseWriter, r *http.Request) {
 				lastValue := StringToFloat(t.InitialValue)
 				newValue := StringToFloat(value[0])
 
-				fmt.Printf("Old Value: %.2f , New Value: %.2f\n", lastValue, newValue)
+				// fmt.Printf("Old Value: %.2f , New Value: %.2f\n", lastValue, newValue)
 
 				switch t.Function {
 				case "maximum":
@@ -175,14 +151,14 @@ func OperatorParametersHandler(w http.ResponseWriter, r *http.Request) {
 				case "increment":
 					t.InitialValue = fmt.Sprintf("%.2f", lastValue+1.0) // increment 1 in lastValue
 				case "decrement":
-					t.InitialValue = fmt.Sprintf("%.2f", lastValue-1.0)
+					t.InitialValue = fmt.Sprintf("%.2f", lastValue-1.0) // decrement 1 in lastValue
 				default:
-					t.InitialValue = fmt.Sprintf("%.2f", newValue) // decrement 1 in lastValue
+					t.InitialValue = fmt.Sprintf("%.2f", newValue)
 				}
 
 				node.Parameters[key] = t
 			}
-			fmt.Printf("\nParamters Changed: %v\n", node.Parameters)
+			fmt.Printf("\nParamters Changed:\n %v\n", node.Parameters)
 			query.Nodes[i] = node
 		}
 
@@ -197,7 +173,7 @@ func OperatorParametersHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		err = ioutil.WriteFile("output.json", b, 0644)
-		log.Print("\n Updated Paramters written")
+		log.Print("\n\nUpdated Paramters written")
 		go writer(&query)
 	}
 
@@ -229,8 +205,8 @@ func processReceivedQueryJSONHandler(rw http.ResponseWriter, req *http.Request) 
 	}
 
 	err = ioutil.WriteFile("output.json", b, 0644)
-	//log.Println(err)
-	log.Print("Json data Received from postman.")
+	// log.Println(err)
+	// log.Print("Json data Received.")
 
 	go writer(&query)
 }
@@ -270,9 +246,11 @@ func echo() {
 func StringToFloat(input_string string) float64 {
 
 	if s, err := strconv.ParseFloat(input_string, 64); err == nil {
-		fmt.Println(s)
+		// fmt.Println(s)
 		return s
 	} else {
 		return 0.0
 	}
 }
+
+// https://stackoverflow.com/questions/41389933/when-to-use-log-over-fmt-for-debugging-and-printing-error
