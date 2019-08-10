@@ -1,15 +1,19 @@
 # Query Visualization
 
 ## Steps to run locally:
-1. Install golang (https://golang.org/doc/install)
-2. Clone the project and place it in src folder created during installation
-3. Go to project folder
-4. Run command "go run main.go"
-5. Open browser, go to localhost:4040 (default port)
 
-## Steps for real time update: 
-1. Open POSTMAN app and select request type "POST" and paste the URL "http://localhost:4040/api/json"
-2. Copy the data from output.json file
-3. Go to body tab and paste the copied data
-4. Make some changes to the values and click on send button
-5. You will see the webpage will be updated with the new data.
+1. Install golang (https://golang.org/doc/install)
+2. Clone the project and place it in src folder created during golang installation
+3. Checkout from "feature" branch
+4. Go to project directory using "cd" command
+5. Run command "go run main.go" to run the server
+6. Open browser, go to localhost:4000 (default port)
+
+## Steps for real time update:
+
+1. Execute streaming.sh script using command "sh streaming.sh" to push new data to server and see real time update
+
+### Following folders/files are created to publish the website on url(www.viewquery.online), so they will be removed in future:
+
+- Godeps(This folder contains the dependices required by project to run on public domain)
+- Procfile
