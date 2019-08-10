@@ -164,7 +164,10 @@
         }
 
         function selectNode(selectedNode) {
-            currentlySelectedNode = selectedNode
+            console.log("Selected Node: "+ selectedNode);
+            currentlySelectedNode = selectedNode;
+            var operatorTitleHeading = document.getElementById("operator-title");
+            operatorTitleHeading.innerText = " Operator Statistics" + " | " + selectedNode.label;
             document.getElementById("param-cards-row").style.display = "block"; // block | none
             createParametersCards(selectedNode.parameters);
         }
